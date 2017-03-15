@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>game</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+<div id="buttons">
+	<button id="loginButton">Login</button>
+	<button id="newGameButton">New Game</button>
+</div>
+<p id="message">{{message}}</p>
+<div id="forms">
+	<button id="returnButton" hidden>Return</button>
+	<form id="loginForm" name="login" method="post" hidden>
+		<label for="nameInput">Username</label>
+		<input type="text" id="nameInput" name="name">
+		<label for="passInput">Password</label>
+		<input type="password" id="passInput" name="pass">
+		<input type="submit" value="Submit">
+	</form>
+	<form id="newLoginForm" name="newLogin" method="post" hidden>
+		<label for="nameInput">Username</label>
+		<input type="text" id="nameInput" name="name">
+		<label for="passInput">Password</label>
+		<input type="password" id="passInput" name="pass">
+		<label for="passConfirmInput">Confirm Password</label>
+		<input type="password" id="passConfirmInput" name="passConfirm">
+		<input type="submit" value="Submit">
+	</form>
+</div>
+<script src="js/lib/jquery.min.js"></script>
+<script >
+$("#loginButton").click(function() {
+	console.log("test")
+	$("#forms").show()
+	$("#buttons").fadeOut(400, function() {
+		$("#returnButton").add("#loginForm").fadeIn();
+	});
+});
+$("#newGameButton").click(function() {
+	$("#forms").show()
+	$("#buttons").fadeOut(400, function() {
+		$("#returnButton").add("#newLoginForm").fadeIn();
+	})
+});
+$("#returnButton").click(function() {
+	$("#forms").fadeOut(400, function() {
+		$("#loginForm").hide();
+		$("#newLoginForm").hide();
+		$("#returnButton").hide();
+		$("#buttons").fadeIn();
+	});
+})
+</script>
+</body>
+</html>
