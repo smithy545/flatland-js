@@ -3,33 +3,45 @@
 <head>
 	<title>game</title>
 	<link rel="stylesheet" type="text/css" href="css/style.css">
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
 </head>
 <body>
-<div id="buttons">
-	<button id="loginButton">Login</button>
-	<button id="newGameButton">New Game</button>
-</div>
-<p id="message">{{message}}</p>
-<div id="forms">
-	<button id="returnButton" hidden>Return</button>
-	<form id="loginForm" name="login" method="post" hidden>
-		<label for="nameInput">Username</label>
-		<input type="text" id="nameInput" name="name">
-		<label for="passInput">Password</label>
-		<input type="password" id="passInput" name="pass">
-		<input type="submit" value="Submit">
-	</form>
-	<form id="newLoginForm" name="newLogin" method="post" hidden>
-		<label for="nameInput">Username</label>
-		<input type="text" id="nameInput" name="name">
-		<label for="passInput">Password</label>
-		<input type="password" id="passInput" name="pass">
-		<label for="passConfirmInput">Confirm Password</label>
-		<input type="password" id="passConfirmInput" name="passConfirm">
-		<input type="submit" value="Submit">
-	</form>
+<div class="container">
+	<div id="buttons">
+		<button id="loginButton">Login</button>
+		<button id="newGameButton">New Game</button>
+	</div>
+	<p id="message">{{message}}</p>
+	<div id="forms">
+		<button id="returnButton" hidden>Return</button>
+		<form id="loginForm" name="login" method="post" hidden>
+			<label for="nameInput">Username</label>
+			<input type="text" id="nameInput" name="name">
+			<label for="passInput">Password</label>
+			<input type="password" id="passInput" name="pass">
+			<input type="submit" value="Submit">
+		</form>
+		<form id="newLoginForm" name="newLogin" method="post" hidden>
+			<label for="nameInput">Username</label>
+			<input type="text" id="nameInput" name="name">
+			<label for="passInput">Password</label>
+			<input type="password" id="passInput" name="pass">
+			<label for="passConfirmInput">Confirm Password</label>
+			<input type="password" id="passConfirmInput" name="passConfirm">
+			<input type="submit" value="Submit">
+		</form>
+	</div>
 </div>
 <script src="js/lib/jquery.min.js"></script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
 <script >
 $("#loginButton").click(function() {
 	console.log("test")
