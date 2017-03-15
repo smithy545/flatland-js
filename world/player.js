@@ -6,3 +6,5 @@ var Player = Class.extend({
 		this.id = id;
 	}
 });
+
+module.exports = Player;
