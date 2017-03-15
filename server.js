@@ -31,7 +31,7 @@ app.post('/', function(req, res) {
 		if(sanUser.length > 0 && sanPass.length > 0
 		&& sanUser.length <= 20 && sanPass.length <= 30) {
 			if(req.body.passConfirm) {
-				var sanPassConfirm = req.body.passConfirm;
+				var sanPassConfirm = sanitizer.sanitize(req.body.passConfirm);
 				if(sanPassConfirm.length > 0 && sanPassConfirm.length <= 30) {
 					if(sanPass !== sanPassConfirm) {
 						res.render('index', {message: "Password and confirm password don't match."});
