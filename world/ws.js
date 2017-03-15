@@ -3,6 +3,8 @@ var sqlite3 = require('sqlite3');
 var World = require('./world');
 var Types = require('../shared/constants');
 
+var db = new sqlite3.Database('db.sqlite3');
+
 // basic hash code for now
 String.prototype.hashCode = function() {
   var hash = 0, i, chr;
@@ -26,14 +28,26 @@ var ws = {
 		io.on('connection', function(socket) {
 			world.addConnection(socket);
 
-			socket.on(Types.MESSAGES.HELLO, function(name, pass) {
+			socket.on(Types.MESSAGES.HELLO, function(id) {
+				db.get("SELECT name FROM user WHERE id="+id, function(err, name) {
+					if(err) {
+						return socket.emit(Types.MESSAGES.ERROR, "Could not find user.");
+					}
+					socket.player = world.welcomePlayer(name, id);
+				})
+			});
+
+			socket.on('disconnect', function() {
+
+			});
+
+			socket.on('error', function() {
 
 			});
 		});
 	},
 	login: function(user, pass, success, fail) {
 		var passHash = pass.hashCode().toString();
-		var db = new sqlite3.Database('db.sqlite3');
 
 		db.get("SELECT id FROM user WHERE name='"+user+"' AND pass='"+passHash+"'", function(err, id) {
 			if(err) return fail();
@@ -41,11 +55,9 @@ var ws = {
 			
 			fail();
 		});
-		db.close();
 	},
 	newUser: function(user, pass, success, fail) {
 		var passHash = pass.hashCode().toString();
-		var db = new sqlite3.Database('db.sqlite3');
 
 		db.get("SELECT id FROM user WHERE name='"+user+"' AND pass='"+passHash+"'", function(err, id) {
 			if(err) return fail();
@@ -61,8 +73,6 @@ var ws = {
 				});
 			});
 		});
-
-		db.close();
 	}
 };
 

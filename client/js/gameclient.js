@@ -4,8 +4,8 @@ define(["lib/socket.io", "../../constants"], function(io) {
 			this.game = game;
 			var conn = this.connection = io();
 
-			conn.emit(Types.MESSAGES.HELLO, this.game.storage.id);
-			conn.on(Types.MESSAGES.WELCOME, function() {
+			conn.emit(Types.MESSAGES.HELLO, this.game.storage.id); // init handshake
+			conn.on(Types.MESSAGES.WELCOME, function() { // complete handshake
 				// do stuff
 			});
 		}
