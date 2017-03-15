@@ -47,11 +47,11 @@ define(["camera"], function(Camera) {
 
 	            this.setCameraView(); // set translation and scaling
 		        
-		        ctx.strokeStyle = "#000";
-		        ctx.strokeRect(100, 0, 100, 100);
-
-		        ctx.fillStyle = "#000";
-		        ctx.fillRect(0, 100, 100, 100);
+	            this.game.state.forEachEntity(function(e) {
+	            	if(e.isVisible && this.camera.canSee(e)) {
+	            		//draw entity
+	            	}
+	            });
 
 		        ctx.restore();
 		    }

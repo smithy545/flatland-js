@@ -26,6 +26,10 @@ define([], function() {
 		},
 		setY: function(y) {
 			this.y = y;
+		},
+		canSee: function(e) {
+			return e.getX() < this.x + this.getWidth() && e.getX() + e.getWidth() > this.x
+				&& e.getY() < this.y + this.getHeight() && e.getY() + e.getHeight() > this.y;
 		}
 	});
 
