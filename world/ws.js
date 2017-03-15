@@ -34,7 +34,7 @@ var ws = {
 						return socket.emit(Types.MESSAGES.ERROR, "Could not find user.");
 					}
 					socket.player = world.welcomePlayer(name, id);
-				})
+				});
 			});
 
 			socket.on('disconnect', function() {

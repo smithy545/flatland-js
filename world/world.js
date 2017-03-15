@@ -1,5 +1,5 @@
-var Class = require('../shared/class.js');
-var d
+var Class = require('../shared/class');
+var Player = require('./player');
 
 var World = Class.extend({
 	init: function() {
