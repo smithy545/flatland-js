@@ -1,4 +1,4 @@
-define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "entityfactory"], function(Renderer, States, GameClient, Map, Storage, Actor, Prop, EntityFactory) {
+define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "entityfactory", "pathfinder"], function(Renderer, States, GameClient, Map, Storage, Actor, Prop, EntityFactory, Pathfinder) {
 	var Game = Class.extend({
 		init: function(canvas) {
 			this.started = false;	// has the game started
@@ -10,6 +10,7 @@ define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "
             this.id = this.storage.id;
             this.client = new GameClient(this); // connection to server
             this.map = null // map object
+            this.pathfinder = null  // pathfinder object
 
             // entity holders
             this.entities = {};
@@ -30,6 +31,7 @@ define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "
 		},
 		start: function(player, map) {
             this.map = new Map(map.width, map.height);
+            this.pathfinder = new Pathfinder(this.map);
             this.storage.setName(player);
             player.entities.forEach((e) => {
                 this.addEntity(EntityFactory[e.type](e));

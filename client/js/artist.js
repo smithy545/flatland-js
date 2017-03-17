@@ -4,7 +4,12 @@ define([], function() {
 			ctx.save();
 
 			ctx.fillStyle = e.character;
-			ctx.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+			ctx.strokeStyle = "#000";
+			ctx.beginPath();
+			ctx.arc(e.getX(), e.getY(), e.getWidth()/2, 0, 2*Math.PI);
+			ctx.fill();
+			ctx.stroke();
+			ctx.closePath();
 
 			ctx.restore();
 		},

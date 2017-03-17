@@ -35,7 +35,14 @@ var ws = {
 						return socket.emit(Types.MESSAGES.ERROR, "Could not find user.");
 					}
 					socket.player = world.welcomePlayer(row.name, parseInt(id), socket);
-					socket.emit(Types.MESSAGES.WELCOME, socket.player.toSendable(), world.map.toSendable());
+					var sendable = socket.player.toSendable();
+					sendable.entities = [];
+					for(var i in world.entities) {
+						if(socket.player.canSee(world.entities[i])) {
+							sendable.entities.push(world.entities[i]);
+						}
+					}
+					socket.emit(Types.MESSAGES.WELCOME, sendable, world.map.toSendable());
 				});
 			});
 			socket.on(Types.MESSAGES.MOVE, function(id, x, y) {

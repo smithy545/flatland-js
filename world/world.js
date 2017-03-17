@@ -25,6 +25,7 @@ var World = Class.extend({
 		e.id = this.entityId++;
 		this.entities[e.id] = e;
 		this.players[e.owner].entities.push(e);
+		this.players[e.owner].createDirtyAreas();
 		this.map.registerEntity(e);
 	},
 	canOrder: function(ownerId, entityId) {

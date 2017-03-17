@@ -38,7 +38,7 @@ Types = {
 	}
 };
 
-TILESIZE = 10;
+TILESIZE = 16;
 
 if(!(typeof module === 'undefined')) {
     module.exports = Types;

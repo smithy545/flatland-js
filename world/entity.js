@@ -19,11 +19,11 @@ var Entity = Class.extend({
 			 * These traits determine how successful they are at various
 			 * in-game tasks. These tasks are yet to be determined.
 			 * They also determine their color. The traits are as follows:
-			 * Charisma: How well the communicate/trade with others
-			 * Dexterity: How good they are at dodging
+			 * Strength: How good at fighting they are
+			 * Dexterity: How good at dodging they are
 			 * Intelligence: How well they research
-			 * Strength: How good at fighting/farming they are
-			 * Constitution: How much health they have/food they need
+			 * Charisma: How well the communicate/trade with others
+			 * Talent: How good they are at building and gathering
 			 * Luck: Affects a little of everything
 			 * Warning to future me: subject to change
 			 */

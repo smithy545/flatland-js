@@ -12,23 +12,12 @@ var Player = Class.extend({
 		this.socket = socket;
 	},
 	toSendable: function() {
-		var entities = [];
-		this.entities.forEach((e) => {
-			entities.push(e.toSendable());
-		});
 		return {
 			name: this.name,
 			id: this.id,
-			entities: entities
 		};
 	},
-	updateDirtyAreas: function(e) {
-		for(var i = 0; i < this.dirtyAreas.length; i++) {
-			if(this.dirtyAreas[i].surrounds(e)) {
-				return; // moving entity still contained in same dirty rect
-			}
-		}
-
+	createDirtyAreas: function() {
 		var dirties = [];
 		var minx=null, miny=null, maxx=null, maxy=null;
 
@@ -49,7 +38,7 @@ var Player = Class.extend({
 			a.addChild(e);
 			dirties.push(a);
 		});
-		dirtiestArea = new Area(minx, miny, maxx-minx, maxy-miny);
+		this.dirtiestArea = new Area(minx, miny, maxx-minx, maxy-miny);
 
 		for(var i = 0; i < dirties.length; i++) {
 			for(var j = i+1; j < dirties.length; j++) {
@@ -75,8 +64,77 @@ var Player = Class.extend({
 
 		this.dirtyAreas = dirties;
 	},
+	updateDirtyAreas: function(e) {
+		var i, j, parents = [];
+		var vr = Types.VIEWDISTANCE[e.type], a = new Area(e.x-vr, e.y-vr, 2*vr+1, 2*vr+1);
+		for(i = 0; i < this.dirtyAreas.length; i++) {
+			if(this.dirtyAreas[i].surrounds(a)) {
+				return; // moving entity still contained in same dirty rect
+			} else if(this.dirtyAreas[i].collides(a)) {
+				for(j = 0; j < this.dirtyAreas[i].children.length; j++) {
+					var child = this.dirtyAreas[i].children[j];
+					if(child == e) {
+						// remove from parent.
+						this.dirtyAreas[i].children.splice(j, 1);
+						j--;
+					} else {
+						vr = Types.VIEWDISTANCE[child.type];
+						var a2 = new Area(child.x-vr, child.y-vr, 2*vr+1, 2*vr+1);
+						if(a2.collides(a)) {
+							parents.push(i);
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		// combine parent dirty rects
+		var minx=null, miny=null, maxx=null, maxy=null;
+		var newChildren = [];	
+		if(parents.length == 0) {
+			minx = e.x;
+			miny = e.y;
+			maxx = e.x+e.width;
+			maxy = e.y+e.height;
+		} else {
+			for(i = 0; i < parents.length; i++) {
+				a = this.dirtyAreas[parents[i]];
+				if(minx) {
+					minx = Math.min(minx, a.x);
+					miny = Math.min(miny, a.y);
+					maxx = Math.max(maxx, a.x+a.width);
+					maxy = Math.max(maxy, a.y+a.height);
+				} else {
+					minx = a.x;
+					miny = a.y;
+					maxx = a.x+a.width;
+					maxy = a.y+a.height;
+				}
+				newChildren = newChildren.concat(this.dirtyAreas.splice(parents[i], 1).children);
+			}
+		}
+		this.dirtyAreas.push(new Area(minx, miny, maxx-minx, maxy-miny));
+		this.dirtyAreas.addChild(e); // add entity back in
+		this.dirtyAreas.children.concat(newChildren);
+
+		// update dirtiest area if necessary
+		// probably not perfect
+		if(this.dirtiestArea.x > minx) {
+			this.dirtiestArea.width += this.dirtiestArea.x-minx;
+			this.dirtiestArea.x = minx;
+		} else if(this.dirtiestArea.x+this.dirtiestArea.width < maxx) {
+			this.dirtiestArea.width += maxx-this.dirtiestArea.x-this.dirtiestArea.width;
+		}
+		if(this.dirtiestArea.y > miny) {
+			this.dirtiestArea.height += this.dirtiestArea.y-miny;
+			this.dirtiestArea.y = miny;
+		} else if(this.dirtiestArea.y+this.dirtiestArea.height < maxy) {
+			this.dirtiestArea.height += maxy-this.dirtiestArea.y-this.dirtiestArea.height;
+		}
+	},
 	canSee: function(e) {
-		if(dirtiestArea.collides(e)) { // possibly visible
+		if(this.dirtiestArea.collides(e)) { // possibly visible
 			var vr = Types.VIEWDISTANCE[e.type], size = 2*vr+1;
 			var entityArea = new Area(e.x-vr, e.y-vr, size, size);
 			for(var i in this.dirtyAreas) { // check dirty areas
