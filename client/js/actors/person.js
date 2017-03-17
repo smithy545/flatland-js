@@ -1,12 +1,15 @@
 define(["actor"], function(Actor) {
 	var Person = Actor.extend({
-		init: function(id, owner, x, y) {
+		init: function(id, owner, character, x, y) {
 			this._super(id, owner, x, y);
 
 			this.width = 1;
 			this.height = 1;
 			this.type = "Person";
 			this.viewRadius = Types.VIEWDISTANCE[this.type];
+
+			this.character = character;
+
 			this.startX = x;
 		},
 		update: function() {

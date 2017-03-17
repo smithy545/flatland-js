@@ -10,7 +10,7 @@ var World = Class.extend({
 		this.players = {};
 		this.entities = {};
 		this.entityId = 1;
-		this.map = new Map(1000, 1000);
+		this.map = new Map(5000, 5000);
 	},
 	welcomePlayer: function(name, id, socket) {
 		id = parseInt(id);
@@ -68,7 +68,7 @@ var World = Class.extend({
 		this.map.unregisterEntity(e);
 		e.setPosition(x, y); // move to pos
 		this.map.registerEntity(e);
-		this.players[e.owner].updateDirtyAreas(); // update owner sight blocks
+		this.players[e.owner].updateDirtyAreas(e); // update owner sight blocks
 		this.updateVisible(e); // update who can see entity/send move signal
 	}
 });

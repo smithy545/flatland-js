@@ -3,7 +3,7 @@ define([], function() {
 		Person: function(ctx, e) {
 			ctx.save();
 
-			ctx.fillStyle = "#f00";
+			ctx.fillStyle = e.character;
 			ctx.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
 
 			ctx.restore();
