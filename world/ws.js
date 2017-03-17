@@ -35,12 +35,14 @@ var ws = {
 						return socket.emit(Types.MESSAGES.ERROR, "Could not find user.");
 					}
 					socket.player = world.welcomePlayer(row.name, parseInt(id), socket);
-					socket.emit(Types.MESSAGES.WELCOME, socket.player.toSendable());
+					socket.emit(Types.MESSAGES.WELCOME, socket.player.toSendable(), world.map.toSendable());
 				});
 			});
 			socket.on(Types.MESSAGES.MOVE, function(id, x, y) {
 				if(socket.player && world.canOrder(socket.player.id, id) && world.canMove(id, x, y)) {
 					world.move(id, x, y);
+				} else {
+					socket.emit(Types.MESSAGES.ERROR, "Cannot move entity there.");
 				}
 			});
 

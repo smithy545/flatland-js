@@ -10,7 +10,7 @@ var World = Class.extend({
 		this.players = {};
 		this.entities = {};
 		this.entityId = 1;
-		this.map = new Map();
+		this.map = new Map(1000, 1000);
 	},
 	welcomePlayer: function(name, id, socket) {
 		id = parseInt(id);
@@ -25,12 +25,14 @@ var World = Class.extend({
 		e.id = this.entityId++;
 		this.entities[e.id] = e;
 		this.players[e.owner].entities.push(e);
+		this.map.registerEntity(e);
 	},
 	canOrder: function(ownerId, entityId) {
 		return this.entities[entityId].owner == ownerId
 	},
 	canMove: function(id, x, y) {
-		return this.entities[id];
+		var e = this.entities[id];
+		return Types.getKind(e.type) == "actor" && !this.map.blocked(x, y, e.width, e.height);
 	},
 	updateVisible: function(e) {
 		// check if moved into sight of new player
@@ -63,7 +65,9 @@ var World = Class.extend({
 	},
 	move: function(id, x, y) {
 		var e = this.entities[id];
+		this.map.unregisterEntity(e);
 		e.setPosition(x, y); // move to pos
+		this.map.registerEntity(e);
 		this.players[e.owner].updateDirtyAreas(); // update owner sight blocks
 		this.updateVisible(e); // update who can see entity/send move signal
 	}

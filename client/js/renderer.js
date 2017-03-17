@@ -49,7 +49,7 @@ define(["camera", "artist"], function(Camera, Artist) {
 	            this.setCameraView(); // set translation and scaling
 		        
 		        // draw viewable tiles (only actors and props so unowned entities not included)
-		        // TODO: look into ways to reduce redundant rect drawing
+		        // TODO: look into ways to reduce redundant rect drawing (dirty rects?)
 		        ctx.fillStyle = "#fff";
 	            this.game.forEachActor((e) => {
 	            	var vr;

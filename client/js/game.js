@@ -1,4 +1,4 @@
-define(["renderer", "states", "gameclient", "storage", "actor", "prop", "entityfactory"], function(Renderer, States, GameClient, Storage, Actor, Prop, EntityFactory) {
+define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "entityfactory"], function(Renderer, States, GameClient, Map, Storage, Actor, Prop, EntityFactory) {
 	var Game = Class.extend({
 		init: function(canvas) {
 			this.started = false;	// has the game started
@@ -9,6 +9,7 @@ define(["renderer", "states", "gameclient", "storage", "actor", "prop", "entityf
             this.storage = new Storage(this);   // cookie storage system
             this.id = this.storage.id;
             this.client = new GameClient(this); // connection to server
+            this.map = null // map object
 
             // entity holders
             this.entities = {};
@@ -27,7 +28,8 @@ define(["renderer", "states", "gameclient", "storage", "actor", "prop", "entityf
 				pressed: false, // whether or not mouse is held down
 			};
 		},
-		start: function(player) {
+		start: function(player, map) {
+            this.map = new Map(map.width, map.height);
             this.storage.setName(player);
             player.entities.forEach((e) => {
                 this.addEntity(EntityFactory[e.type](e));
@@ -87,8 +89,10 @@ define(["renderer", "states", "gameclient", "storage", "actor", "prop", "entityf
             if(e instanceof Prop && e.owner == this.id) {
                 this.props[e.id] = true;
             }
+            this.map.registerEntity(e);
         },
         removeEntity: function(id) {
+            this.map.unregisterEntity(this.entities[id]);
             delete this.entities[id];
             delete this.actors[id];
             delete this.props[id];
