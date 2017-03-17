@@ -48,14 +48,22 @@ define(["camera", "artist"], function(Camera, Artist) {
 
 	            this.setCameraView(); // set translation and scaling
 		        
-		        ctx.fillStyle = "#fff"; // for background
-	            this.game.forEachEntity((e) => {
+		        // draw viewable tiles (only actors and props so unowned entities not included)
+		        // TODO: look into ways to reduce redundant rect drawing
+		        ctx.fillStyle = "#fff";
+	            this.game.forEachActor((e) => {
 	            	var vr;
+            		vr = e.viewRadius*TILESIZE;
+            		ctx.fillRect(e.getX()-vr, e.getY()-vr, 2*vr+1, 2*vr+1);
+	            });
+	            this.game.forEachProp((e) => {
+	            	var vr;
+            		vr = e.viewRadius*TILESIZE;
+            		ctx.fillRect(e.getX()-vr, e.getY()-vr, 2*vr+1, 2*vr+1);
+	            });
+
+	            this.game.forEachEntity((e) => {
 	            	if(e.isVisible() && this.camera.canSee(e)) {
-	            		if(e.owner === this.game.id) {
-		            		vr = e.viewRadius*TILESIZE;
-		            		ctx.fillRect(e.getX()-vr, e.getY()-vr, 2*vr+1, 2*vr+1); // could be redundant
-		            	}
 	            		if(Artist[e.type]) {
 	            			Artist[e.type](ctx, e);
 	            		} else {

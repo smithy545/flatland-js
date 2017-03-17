@@ -2,6 +2,7 @@ var sqlite3 = require('sqlite3');
 
 var World = require('./world');
 var Types = require('../shared/constants');
+var Class = require('../shared/class');
 
 var db = new sqlite3.Database('db.sqlite3');
 
@@ -38,7 +39,7 @@ var ws = {
 				});
 			});
 			socket.on(Types.MESSAGES.MOVE, function(id, x, y) {
-				if(world.canMove(id, x, y)) {
+				if(socket.player && world.canOrder(socket.player.id, id) && world.canMove(id, x, y)) {
 					world.move(id, x, y);
 				}
 			});

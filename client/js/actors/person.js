@@ -6,11 +6,11 @@ define(["actor"], function(Actor) {
 			this.width = 1;
 			this.height = 1;
 			this.type = "Person";
-			this.viewRadius = 10;
+			this.viewRadius = Types.VIEWDISTANCE[this.type];
 			this.startX = x;
 		},
 		update: function() {
-			if(this.gridX < this.startX+10) {	
+			if(this.gridX < this.startX+10) {
 				return [Types.MESSAGES.MOVE, this.id, this.gridX+1, this.gridY];
 			}
 		}

@@ -1,7 +1,9 @@
 var Class = require('../shared/class');
+var Types = require('../shared/constants');
 var Player = require('./player');
 var Entity = require('./entity');
 var Map = require('./map');
+var Area = require('./area');
 
 var World = Class.extend({
 	init: function() {
@@ -11,6 +13,7 @@ var World = Class.extend({
 		this.map = new Map();
 	},
 	welcomePlayer: function(name, id, socket) {
+		id = parseInt(id);
 		if(!this.players[id]) {
 			this.players[id] = new Player(name, id, socket);
 			this.addEntity(new Entity(id, "Person", 10, 10, 1, 1)); // give commander
@@ -23,32 +26,45 @@ var World = Class.extend({
 		this.entities[e.id] = e;
 		this.players[e.owner].entities.push(e);
 	},
+	canOrder: function(ownerId, entityId) {
+		return this.entities[entityId].owner == ownerId
+	},
 	canMove: function(id, x, y) {
-		return true;
+		return this.entities[id];
 	},
 	updateVisible: function(e) {
-		for(id in this.players) {
-			if(parseInt(id) !== e.owner) { // owner can always see
+		// check if moved into sight of new player
+		for(var id in this.players) {
+			if(id !== e.owner) { // owner can always see
 				if(this.players[id].canSee(e)) { // add to player view
 					if(e.visibleTo[id]) { // if visible move
 						this.players[id].socket.emit(Types.MESSAGES.MOVE, e.id, e.x, e.y);
 					} else { // else spawn
 						e.visibleTo[id] = true;
-						this.players[id].socket.emit(Types.MESSAGES.SPAWN, e);
+						this.players[id].socket.emit(Types.MESSAGES.SPAWN, e.toSendable());
 					}
 				} else { // remove from player view
 					this.players[id].socket.emit(Types.MESSAGES.DESPAWN, e.id);
 					delete e.visibleTo[id];
 				}
-			} else { // may have to change later
+			} else { // move if owned-may have to change later
 				this.players[id].socket.emit(Types.MESSAGES.MOVE, e.id, e.x, e.y);
+			}
+		}
+		// check if moved into sight of new entity
+		var vr = Types.VIEWDISTANCE[e.type];
+		var viewBox = new Area(e.x-vr, e.y-vr, 2*vr+1, 2*vr+1);
+		for(var id in this.entities) {
+			if(!this.entities[id].visibleTo[e.owner] && viewBox.collides(this.entities[id])) {
+				this.entities[id].visibleTo[e.owner] = true;
+				this.players[e.owner].socket.emit(Types.MESSAGES.SPAWN, this.entities[id].toSendable());
 			}
 		}
 	},
 	move: function(id, x, y) {
 		var e = this.entities[id];
 		e.setPosition(x, y); // move to pos
-		this.players[e.owner].updateDirtyAreas(); // update owner
+		this.players[e.owner].updateDirtyAreas(); // update owner sight blocks
 		this.updateVisible(e); // update who can see entity/send move signal
 	}
 });

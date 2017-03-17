@@ -81,10 +81,10 @@ define(["renderer", "states", "gameclient", "storage", "actor", "prop", "entityf
         },
         addEntity: function(e) {
             this.entities[e.id] = e;
-            if(e instanceof Actor) {
+            if(e instanceof Actor && e.owner == this.id) {
                 this.actors[e.id] = true;
             }
-            if(e instanceof Prop) {
+            if(e instanceof Prop && e.owner == this.id) {
                 this.props[e.id] = true;
             }
         },

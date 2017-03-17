@@ -7,6 +7,10 @@ Types = {
 		DESPAWN: 5,
 		ENTITIES: 6,
 		MOVE: 7
+	},
+	VIEWDISTANCE: {
+		Person: 10,
+		Tree: 0
 	}
 }
 
