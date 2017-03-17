@@ -5,7 +5,7 @@ requirejs.config({
     }
 });
 
-define(["jquery", "../class", "game"], function($, Class, Game) {
+define(["jquery", "../class", "game", "../util", "../constants"], function($, Class, Game) {
 
 	var canvas = document.getElementById("game");
 	var game = new Game(canvas);
@@ -25,6 +25,4 @@ define(["jquery", "../class", "game"], function($, Class, Game) {
 			game.mouseup(evt.clientX, evt.clientY);
 		}
 	});
-
-	game.start();
 });

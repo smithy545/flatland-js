@@ -1,4 +1,4 @@
-define(["camera"], function(Camera) {
+define(["camera", "artist"], function(Camera, Artist) {
 	var Renderer = Class.extend({
 		init: function(game, canvas) {
 			this.game = game;	// parent game
@@ -22,7 +22,8 @@ define(["camera"], function(Camera) {
             this.context.scale(scale, scale);
 		},
 		clearScreen: function() {
-            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			this.context.fillStyle = "#000";
+            this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 		},
 		resize: function() {
 			this.canvas.width = window.innerWidth;
@@ -47,9 +48,20 @@ define(["camera"], function(Camera) {
 
 	            this.setCameraView(); // set translation and scaling
 		        
-	            this.game.state.forEachEntity(function(e) {
-	            	if(e.isVisible && this.camera.canSee(e)) {
-	            		//draw entity
+		        ctx.fillStyle = "#fff"; // for background
+	            this.game.forEachEntity((e) => {
+	            	var vr;
+	            	if(e.isVisible() && this.camera.canSee(e)) {
+	            		if(e.owner === this.game.id) {
+		            		vr = e.viewRadius*TILESIZE;
+		            		ctx.fillRect(e.getX()-vr, e.getY()-vr, 2*vr+1, 2*vr+1); // could be redundant
+		            	}
+	            		if(Artist[e.type]) {
+	            			Artist[e.type](ctx, e);
+	            		} else {
+		            		// no drawing function, just use square
+		            		ctx.strokeRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+		            	}
 	            	}
 	            });
 

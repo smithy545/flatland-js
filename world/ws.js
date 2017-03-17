@@ -26,32 +26,38 @@ var ws = {
 		console.log("World created.");
 
 		io.on('connection', function(socket) {
-			world.addConnection(socket);
+			console.log("Connection from " + socket.client.conn.remoteAddress);
 
 			socket.on(Types.MESSAGES.HELLO, function(id) {
-				db.get("SELECT name FROM user WHERE id="+id, function(err, name) {
+				db.get("SELECT name FROM user WHERE id="+id, function(err, row) {
 					if(err) {
 						return socket.emit(Types.MESSAGES.ERROR, "Could not find user.");
 					}
-					socket.player = world.welcomePlayer(name, id);
+					socket.player = world.welcomePlayer(row.name, parseInt(id), socket);
+					socket.emit(Types.MESSAGES.WELCOME, socket.player.toSendable());
 				});
+			});
+			socket.on(Types.MESSAGES.MOVE, function(id, x, y) {
+				if(world.canMove(id, x, y)) {
+					world.move(id, x, y);
+				}
 			});
 
 			socket.on('disconnect', function() {
-
+				console.log(socket.client.conn.remoteAddress + " disconnected.");
 			});
 
 			socket.on('error', function() {
-
+				console.log("Error: " + arguments);
 			});
 		});
 	},
 	login: function(user, pass, success, fail) {
 		var passHash = pass.hashCode().toString();
 
-		db.get("SELECT id FROM user WHERE name='"+user+"' AND pass='"+passHash+"'", function(err, id) {
+		db.get("SELECT id FROM user WHERE name='"+user+"' AND pass='"+passHash+"'", function(err, row) {
 			if(err) return fail();
-			if(id != undefined) return success(id);
+			if(row != undefined) return success(row.id);
 			
 			fail();
 		});
@@ -59,15 +65,15 @@ var ws = {
 	newUser: function(user, pass, success, fail) {
 		var passHash = pass.hashCode().toString();
 
-		db.get("SELECT id FROM user WHERE name='"+user+"' AND pass='"+passHash+"'", function(err, id) {
+		db.get("SELECT id FROM user WHERE name='"+user+"' AND pass='"+passHash+"'", function(err, row) {
 			if(err) return fail();
-			if(id != undefined) return fail();
+			if(row != undefined) return fail();
 
 			db.run("INSERT INTO user (name, pass) VALUES ('"+user+"','"+passHash+"')", function(err) {
 				if(err) return fail();
-				db.get("SELECT id FROM user WHERE name='"+user+"' AND pass='"+passHash+"'", function(err, id) {
+				db.get("SELECT id FROM user WHERE name='"+user+"' AND pass='"+passHash+"'", function(err, row) {
 					if(err) return fail();
-					if(id != undefined) return success(id);
+					if(row != undefined) return success(row.id);
 					
 					fail();
 				});

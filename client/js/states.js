@@ -1,7 +1,7 @@
-define(["states/state"], function(State) {
+define(["states/play"], function(Play) {
 	var States = {
-		game: function(game) {
-			return new State(game);
+		play: function(game) {
+			return new Play(game);
 		}
 	};
 

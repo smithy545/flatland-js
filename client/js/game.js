@@ -1,4 +1,4 @@
-define(["renderer", "states", "gameclient", "storage"], function(Renderer, States, GameClient, Storage) {
+define(["renderer", "states", "gameclient", "storage", "actor", "prop", "entityfactory"], function(Renderer, States, GameClient, Storage, Actor, Prop, EntityFactory) {
 	var Game = Class.extend({
 		init: function(canvas) {
 			this.started = false;	// has the game started
@@ -7,7 +7,16 @@ define(["renderer", "states", "gameclient", "storage"], function(Renderer, State
 			this.renderer = new Renderer(this, canvas);	// renderer object
 			this.state = null;		// current game state
             this.storage = new Storage(this);   // cookie storage system
+            this.id = this.storage.id;
             this.client = new GameClient(this); // connection to server
+
+            // entity holders
+            this.entities = {};
+            this.actors = {};
+            this.props = {};
+
+            // visible areas
+            this.areas = [];
 
 			// mouse state
 			this.mouse = {
@@ -15,13 +24,18 @@ define(["renderer", "states", "gameclient", "storage"], function(Renderer, State
 				previousY: 0, // previous y-pos
 				x: 0,	// current x-pos
 				y: 0,	// current y-pos
-				pressed: false,
+				pressed: false, // whether or not mouse is held down
 			};
 		},
-		start: function() {
+		start: function(player) {
+            this.storage.setName(player);
+            player.entities.forEach((e) => {
+                this.addEntity(EntityFactory[e.type](e));
+            });
+
 			this.started = true;
 			this.isStopped = false;
-			this.state = States.game(this); // game state
+			this.state = States.play(this); // game state
 
 			this.tick();
 		},
@@ -30,14 +44,14 @@ define(["renderer", "states", "gameclient", "storage"], function(Renderer, State
 		},
         tick: function() {
             this.currentTime = new Date().getTime();
-
+            
             if(this.started) {
                 //game logic
                 this.state.update();
                 this.renderer.renderFrame();
             }
 
-            if(!this.isStopped) {
+            if(!this.isStopped) { // tick if not stopped
                 requestAnimationFrame(this.tick.bind(this));
             }
         },
@@ -64,6 +78,35 @@ define(["renderer", "states", "gameclient", "storage"], function(Renderer, State
         },
         getMouseY: function() {
         	return this.mouse.y;
+        },
+        addEntity: function(e) {
+            this.entities[e.id] = e;
+            if(e instanceof Actor) {
+                this.actors[e.id] = true;
+            }
+            if(e instanceof Prop) {
+                this.props[e.id] = true;
+            }
+        },
+        removeEntity: function(id) {
+            delete this.entities[id];
+            delete this.actors[id];
+            delete this.props[id];
+        },
+        forEachEntity: function(callback) {
+            for(i in this.entities) {
+                callback(this.entities[i]);
+            }
+        },
+        forEachActor: function(callback) {
+            for(i in this.actors) {
+                callback(this.entities[i]);
+            }
+        },
+        forEachProp: function(callback) {
+            for(i in this.props) {
+                callback(this.entities[i]);
+            }
         }
 	});
 

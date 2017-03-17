@@ -5,6 +5,7 @@ html, body {
   overflow: hidden;
 }
 
-p#playerId {
-	display: none;
+#disconnectMessage {
+	
 }
+
