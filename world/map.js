@@ -19,6 +19,9 @@ var Map = Class.extend({
 		return this.entityGrid[y][x];
 	},
 	blocked: function(x, y, w, h) {
+		if(x < 0 || y < 0 || x+w >= this.width || y+h >= this.height) {
+			return true;
+		}
 		for(var i = 0; i < h; i++) {
 			for(var j = 0; j < w; j++) {
 				if(this.pathingGrid[y+i][x+j]) {

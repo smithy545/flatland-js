@@ -1,4 +1,5 @@
-define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "entityfactory", "pathfinder"], function(Renderer, States, GameClient, Map, Storage, Actor, Prop, EntityFactory, Pathfinder) {
+define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "entityfactory", "pathfinder"],
+    function(Renderer, States, GameClient, Map, Storage, Actor, Prop, EntityFactory, Pathfinder) {
 	var Game = Class.extend({
 		init: function(canvas) {
 			this.started = false;	// has the game started
@@ -27,7 +28,11 @@ define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "
 				x: 0,	// current x-pos
 				y: 0,	// current y-pos
 				pressed: false, // whether or not mouse is held down
+                button: null    // button most recently pressed
 			};
+
+            // keyboard state
+            this.keys = {};
 		},
 		start: function(player, map) {
             this.map = new Map(map.width, map.height);
@@ -65,17 +70,32 @@ define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "
         	this.mouse.x = x;
         	this.mouse.y = y;
         },
-        mousedown: function(x, y) {
+        mousedown: function(button, x, y) {
         	this.setMousePosition(x, y);
         	this.mouse.pressed = true;
+            this.mouse.button = button;
 
-        	this.state.mousedown();
+        	this.state.mousedown(this.mouse); // unnecessary but helpful
         },
-        mouseup: function(x, y) {
+        mouseup: function(button, x, y) {
         	this.setMousePosition(x, y);
         	this.mouse.pressed = false;
+            this.mouse.button = button;
 
-        	this.state.mouseup();
+        	this.state.mouseup(this.mouse); // unnecessary but helpful
+        },
+        mousemove: function(x, y) {
+            // only set current, not previous
+            this.mouse.x = x;
+            this.mouse.y = y;
+
+            this.state.mousemove(this.mouse); // unnecessary but helpful
+        },
+        keyup: function(key) {
+            this.keys[key] = false;
+        },
+        keydown: function(key) {
+            this.keys[key] = true;
         },
         getMouseX: function() {
         	return this.mouse.x;
@@ -113,6 +133,15 @@ define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "
             for(i in this.props) {
                 callback(this.entities[i]);
             }
+        },
+        forEachUIElement: function(callback) {
+            var elements = this.state.getUIElements();
+            for(i in elements) {
+                callback(elements[i]);
+            }
+        },
+        entityAt: function(x, y) {
+            return this.map.entityAt(x, y);
         }
 	});
 

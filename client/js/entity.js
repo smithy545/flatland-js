@@ -36,16 +36,36 @@ define([], function() {
 		getGridHeight: function() {
 			return this.height;
 		},
+		setWidth: function(width) {
+			if(width > 0) {
+				this.width = Math.ceil(width/TILESIZE);
+			} else {
+				this.width = Math.floor(width/TILESIZE);
+			}
+		},
+		setHeight: function(height) {
+			if(height > 0) {
+				this.height = Math.ceil(height/TILESIZE);
+			} else {
+				this.height = Math.floor(height/TILESIZE);
+			}
+		},
+		setGridWidth: function(width) {
+			this.width = width;
+		},
+		setGridHeight: function(height) {
+			this.height = height;
+		},
 		isVisible: function() {
 			return this.visible;
 		},
 		setX: function(x) {
 			this.x = x;
-			this.gridX = x/TILESIZE;
+			this.gridX = Math.floor(x/TILESIZE);
 		},
 		setY: function(y) {
 			this.y = y;
-			this.gridY = y/TILESIZE;
+			this.gridY = Math.floor(y/TILESIZE);
 		},
 		setGridX: function(x) {
 			this.x = x*TILESIZE;
@@ -59,8 +79,8 @@ define([], function() {
 			this.x = x;
 			this.y = y;
 
-			this.gridX = x/TILESIZE;
-			this.gridY = y/TILESIZE;
+			this.gridX = Math.floor(x/TILESIZE);
+			this.gridY = Math.floor(y/TILESIZE);
 		},
 		setGridPosition: function(x, y) {
 			this.x = x*TILESIZE;

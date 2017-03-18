@@ -14,23 +14,15 @@ var Entity = Class.extend({
 		this.visibleTo[owner] = true;
 
 		if(this.type == "Person") {
-			var charArray = [0,1,2,3,4,5,6,7,8,9,'a','b','c','d','e','f'];
-			/* This is a 6 digit assortment of the persons character traits.
+			/* This is an assortment of the persons character traits.
 			 * These traits determine how successful they are at various
 			 * in-game tasks. These tasks are yet to be determined.
-			 * They also determine their color. The traits are as follows:
-			 * Strength: How good at fighting they are
-			 * Dexterity: How good at dodging they are
-			 * Intelligence: How well they research
-			 * Charisma: How well the communicate/trade with others
-			 * Talent: How good they are at building and gathering
-			 * Luck: Affects a little of everything
-			 * Warning to future me: subject to change
 			 */
-			this.character = "#";
-			for(var i = 0; i < 6; i++) {
-				this.character += charArray[Math.floor(Math.random(Date.now())*16)];
-			}
+			this.character = {
+				intelligence: 0,
+				strength: 0,
+				luck: 0,
+			};
 		}
 	},
 	getX: function() {

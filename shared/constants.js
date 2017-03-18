@@ -27,6 +27,18 @@ Types = {
 	PROPS: {
 		Tree: 1,
 	},
+	DIRECTIONS: {
+		UP: 1,
+		DOWN: 2,
+		LEFT: 3,
+		RIGHT: 4,
+
+		// possibly for later implementation
+		UPLEFT: 5,
+		UPRIGHT: 6,
+		DOWNLEFT: 7,
+		DOWNRIGHT: 8
+	},
 
 	getKind: function(type) {
 		if(Types.ACTORS[type]) {

@@ -16,13 +16,31 @@ define(["jquery", "../class", "game", "../util", "../constants"], function($, Cl
 
 	$(document).mousedown(function(evt) {
 		if(game.started) {
-			game.mousedown(evt.clientX, evt.clientY);
+			game.mousedown(evt.button, evt.clientX, evt.clientY);
 		}
 	});
 
 	$(document).mouseup(function(evt) {
 		if(game.started) {
-			game.mouseup(evt.clientX, evt.clientY);
+			game.mouseup(evt.button, evt.clientX, evt.clientY);
+		}
+	});
+
+	$(document).mousemove(function(evt) {
+		if(game.started) {
+			game.mousemove(evt.clientX, evt.clientY);
+		}
+	});
+
+	$(document).keyup(function(evt) {
+		if(game.started) {
+			game.keyup(evt.keyCode);
+		}
+	});
+
+	$(document).keydown(function(evt) {
+		if(game.started) {
+			game.keydown(evt.keyCode);
 		}
 	});
 });

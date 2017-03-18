@@ -114,9 +114,10 @@ var Player = Class.extend({
 				newChildren = newChildren.concat(this.dirtyAreas.splice(parents[i], 1).children);
 			}
 		}
-		this.dirtyAreas.push(new Area(minx, miny, maxx-minx, maxy-miny));
-		this.dirtyAreas.addChild(e); // add entity back in
-		this.dirtyAreas.children.concat(newChildren);
+		var a = new Area(minx, miny, maxx-minx, maxy-miny);
+		this.dirtyAreas.push(a);
+		a.addChild(e); // add entity back in
+		a.children.concat(newChildren); // add new children
 
 		// update dirtiest area if necessary
 		// probably not perfect

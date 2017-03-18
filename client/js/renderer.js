@@ -38,6 +38,18 @@ define(["camera", "artist"], function(Camera, Artist) {
 		createCamera: function() {
 			this.camera = new Camera(this);
 		},
+		panUp: function() {
+			this.camera.setY(this.camera.getY()-1);
+		},
+		panDown: function() {
+			this.camera.setY(this.camera.getY()+1);
+		},
+		panLeft: function() {
+			this.camera.setX(this.camera.getX()-1);
+		},
+		panRight: function() {
+			this.camera.setX(this.camera.getX()+1);
+		},
 		renderFrame: function() {
 			var ctx = this.context;
 
@@ -77,7 +89,16 @@ define(["camera", "artist"], function(Camera, Artist) {
 		    }
 
 		    //draw ui
-
+		    this.game.forEachUIElement((e) => {
+            	if(e.isVisible() && this.camera.canSee(e)) {
+            		if(Artist[e.type]) {
+            			Artist[e.type](ctx, e);
+            		} else {
+	            		// no drawing function, just use square
+	            		ctx.strokeRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+	            	}
+            	}
+		    });
 		},
 	});
 
