@@ -11,20 +11,21 @@ define(["lib/socket.io", "entityfactory"], function(io, EntityFactory) {
 			conn.emit(Types.MESSAGES.HELLO, this.game.storage.id); // init handshake
 			conn.on(Types.MESSAGES.WELCOME, function(player, map) { // complete handshake
 				game.start(player, map);
+
+				conn.on(Types.MESSAGES.SPAWN, function(e) { // spawn entity in vision
+					game.receiveEntity(e);
+				});
+				conn.on(Types.MESSAGES.DESPAWN, function(id) { // remove entity from vision
+					game.removeEntity(id);
+				});
+				conn.on(Types.MESSAGES.MOVE, function(id, x, y) {
+					game.map.unregisterEntity(game.entities[id]);
+					game.entities[id].setGridPosition(x, y);
+					game.map.registerEntity(game.entities[id]);
+				});
 			});
 			conn.on(Types.MESSAGES.ERROR, function(msg) { //handle error
 				console.log("Error: " + msg);
-			});
-			conn.on(Types.MESSAGES.SPAWN, function(entity) { // spawn entity in vision
-				game.addEntity(EntityFactory[entity.type](entity));
-			});
-			conn.on(Types.MESSAGES.DESPAWN, function(id) { // remove entity from vision
-				game.removeEntity(id);
-			});
-			conn.on(Types.MESSAGES.MOVE, function(id, x, y) {
-				game.map.unregisterEntity(game.entities[id]);
-				game.entities[id].setGridPosition(x, y);
-				game.map.registerEntity(game.entities[id]);
 			});
 		},
 		emit: function() {

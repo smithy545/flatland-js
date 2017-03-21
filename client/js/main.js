@@ -5,7 +5,7 @@ requirejs.config({
     }
 });
 
-define(["jquery", "../class", "game", "../util", "../constants"], function($, Class, Game) {
+define(["jquery", "lib/underscore.min", "../class", "game", "../util", "../constants"], function($, _, Class, Game) {
 
 	var canvas = document.getElementById("game");
 	var game = new Game(canvas);

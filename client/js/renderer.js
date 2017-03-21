@@ -1,14 +1,32 @@
-define(["camera", "artist"], function(Camera, Artist) {
+define(["camera", "artist", "sprites", "sprite"], function(Camera, Artist, sprites, Sprite) {
 	var Renderer = Class.extend({
 		init: function(game, canvas) {
 			this.game = game;	// parent game
+
+			this.isLoaded = false;
 
 			// drawing context
             this.context = (canvas && canvas.getContext) ? canvas.getContext("2d") : null;
 			this.canvas = canvas;	// drawing canvas
 
+			//this.sprites = sprites; unnecessary for now
+			this.spriteset = {};
+			this.loadSprites();
+
 			this.resize();
 			this.createCamera();
+		},
+		loadSprites: function() {
+			var counter = Object.keys(sprites).length;
+			for(var name in sprites) {
+				this.spriteset[name] = new Sprite(sprites[name], (id) => {
+					console.log("Sprite " + id + " loaded.");
+					counter--;
+					if(counter == 0) {
+						this.isLoaded = true;
+					}
+				});
+			}
 		},
 		setScale: function(scale) {
 			this.camera.setScale(scale);
@@ -39,16 +57,24 @@ define(["camera", "artist"], function(Camera, Artist) {
 			this.camera = new Camera(this);
 		},
 		panUp: function() {
-			this.camera.setY(this.camera.getY()-1);
+			if(this.camera.getY() > 0) {
+				this.camera.setY(this.camera.getY()-1);
+			}
 		},
 		panDown: function() {
-			this.camera.setY(this.camera.getY()+1);
+			if(this.camera.getY() < this.getHeight()) {
+				this.camera.setY(this.camera.getY()+1);
+			}
 		},
 		panLeft: function() {
-			this.camera.setX(this.camera.getX()-1);
+			if(this.camera.getX() > 0) {
+				this.camera.setX(this.camera.getX()-1);
+			}
 		},
 		panRight: function() {
-			this.camera.setX(this.camera.getX()+1);
+			if(this.camera.getX() < this.getWidth()) {
+				this.camera.setX(this.camera.getX()+1);
+			}
 		},
 		renderFrame: function() {
 			var ctx = this.context;

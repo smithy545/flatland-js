@@ -19,7 +19,8 @@ Types = {
 	},
 	VIEWDISTANCE: {
 		Person: 10,
-		Tree: 0
+		Tree: 0,
+		Monster: 4
 	},
 	ACTORS: {
 		Person: 1,
@@ -50,7 +51,7 @@ Types = {
 	}
 };
 
-TILESIZE = 16;
+TILESIZE = 32;
 
 if(!(typeof module === 'undefined')) {
     module.exports = Types;

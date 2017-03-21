@@ -35,19 +35,37 @@ define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "
             this.keys = {};
 		},
 		start: function(player, map) {
-            this.map = new Map(map.width, map.height);
-            this.pathfinder = new Pathfinder(this.map);
-            this.storage.setName(player);
-            player.entities.forEach((e) => {
-                this.addEntity(EntityFactory[e.type](e));
-            });
+            var startInterval = setInterval(() => {
+                if(this.renderer.isLoaded) {
+                    this.map = new Map(map.width, map.height);
+                    this.pathfinder = new Pathfinder(this.map);
+                    this.storage.setName(player);
 
-			this.started = true;
-			this.isStopped = false;
-			this.state = States.play(this); // game state
+                    player.entities.forEach((e) => {
+                        this.receiveEntity(e);
+                    });
 
-			this.tick();
+        			this.started = true;
+        			this.isStopped = false;
+        			this.state = States.play(this); // game state
+
+        			this.tick();
+                    clearInterval(startInterval);
+                }
+            }, 100);
 		},
+        receiveEntity: function(e) {
+            var entity = EntityFactory[e.type](e);
+            if(entity.type === 'sprite') {
+                entity.setSprite(this.renderer.spriteset[entity.spriteName], (entity) => {
+                    entity.setState(e.state);
+                    this.addEntity(entity);
+                });
+            } else {
+                entity.setState(e.state);
+                this.addEntity(entity);
+            }
+        },
 		setRenderer: function(renderer) {
 			this.renderer = renderer;
 		},
@@ -56,7 +74,7 @@ define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "
             
             if(this.started) {
                 //game logic
-                this.state.update();
+                this.state.update(this.currentTime);
                 this.renderer.renderFrame();
             }
 

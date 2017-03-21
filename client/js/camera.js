@@ -12,6 +12,12 @@ define([], function() {
 		getY: function() {
 			return this.y;
 		},
+		getGridX: function() {
+			return Math.floor(this.x/TILESIZE);
+		},
+		getGridY: function() {
+			return Math.floor(this.y/TILESIZE);
+		},
 		getWidth: function() {
 			return this.renderer.getWidth();
 		},

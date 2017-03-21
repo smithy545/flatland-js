@@ -12,6 +12,7 @@ var Entity = Class.extend({
 		this.type = type;
 		this.visibleTo = {};
 		this.visibleTo[owner] = true;
+		this.state = "idle_down";
 
 		if(this.type == "Person") {
 			/* This is an assortment of the persons character traits.
@@ -56,6 +57,7 @@ var Entity = Class.extend({
 			owner: this.owner,
 			type: this.type,
 			id: this.id,
+			state: this.state
 		};
 		if(this.type == "Person") {
 			obj['character'] = this.character;

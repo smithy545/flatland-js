@@ -5,8 +5,9 @@ define(["actor"], function(Actor) {
 
 			this.setWidth(1);
 			this.setHeight(1);
+
 			this.type = "Person";
-			this.viewRadius = Types.VIEWDISTANCE[this.type];
+			this.viewRadius = Types.VIEWDISTANCE["Person"];
 
 			this.character = character;
 			this.queue = [];

@@ -42,8 +42,43 @@ define([], function() {
 
 			ctx.restore();
 		},
-		sprite: function(ctx, e) {
-			
+		sprite: function(ctx, entity) {
+            var sprite = entity.sprite,
+                anim = entity.currentAnimation;
+        
+            if(anim && sprite) {
+                var	frame = anim.currentFrame,
+                    // source coords
+                    sx = frame.x,
+                    sy = frame.y,
+                    sw = sprite.width,
+                    sh = sprite.height,
+                    ox = sprite.offsetX,
+                    oy = sprite.offsetY,
+
+                    // destination coords
+                    dx = entity.getX(),
+                    dy = entity.getY(),
+                    dw = entity.getWidth(),
+                    dh = entity.getHeight();
+            	
+                ctx.save();
+                if(entity.flipSpriteX) {
+                    ctx.translate(dx + TILESIZE, dy);
+                    ctx.scale(-1, 1);
+                }
+                else if(entity.flipSpriteY) {
+                    ctx.translate(dx, dy + dh);
+                    ctx.scale(1, -1);
+                }
+                else {
+                    ctx.translate(dx, dy);
+                }
+            
+                ctx.drawImage(sprite.image, sx, sy, sw, sh, ox, oy, dw, dh);
+            
+                ctx.restore();
+            }
 		}
 	};
 

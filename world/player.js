@@ -135,14 +135,16 @@ var Player = Class.extend({
 		}
 	},
 	canSee: function(e) {
+		var child, childArea, vr;
 		if(this.dirtiestArea.collides(e)) { // possibly visible
-			var vr = Types.VIEWDISTANCE[e.type], size = 2*vr+1;
-			var entityArea = new Area(e.x-vr, e.y-vr, size, size);
 			for(var i in this.dirtyAreas) { // check dirty areas
-				if(this.dirtyAreas[i].collides(e)) {
+				if(this.dirtyAreas[i].contains(e.x, e.y)) {
 					if(this.dirtyAreas[i].children.length > 1) { // if combo area
 						for(var j in this.dirtyAreas[i].children) { // check specific areas
-							if(Util.collides(this.dirtyAreas[i].children[j], entityArea)) { // collision
+							child = this.dirtyAreas[i].children[j]
+							vr = Types.VIEWDISTANCE[child.type];
+							childArea = new Area(child.x-vr, child.y-vr, 2*vr+1, 2*vr+1);
+							if(childArea.contains(e.x, e.y)) { // collision
 								return true;
 							}
 						}

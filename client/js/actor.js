@@ -5,11 +5,13 @@ define(["entity"], function(Entity) {
 			this.owner = owner;
 			this.setGridPosition(x, y);
 			this.id = id;
-			this.path = [];
+			this.path = [];		// for pathing
+			this.queue = [];	// for thinking
+
 			this.target = null;
 		},
 		update: function() {
-			// override this pls
+			// pls override
 		},
 		setTarget: function(target) {
 			this.target = target;
