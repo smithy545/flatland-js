@@ -1,16 +1,16 @@
 define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "entityfactory", "pathfinder"],
     function(Renderer, States, GameClient, Map, Storage, Actor, Prop, EntityFactory, Pathfinder) {
 	var Game = Class.extend({
-		init: function(canvas) {
+		init: function(canvas, screen) {
 			this.started = false;	// has the game started
 			this.isStopped = true;	// is the game stopped
 			this.isPaused = false;	// is the game paused
-			this.renderer = new Renderer(this, canvas);	// renderer object
+			this.renderer = new Renderer(this, canvas, screen);	// renderer object
 			this.state = null;		// current game state
             this.storage = new Storage(this);   // cookie storage system
             this.id = this.storage.id;
             this.client = new GameClient(this); // connection to server
-            this.map = null // map object
+            this.map = null         // map object
             this.pathfinder = null  // pathfinder object
 
             // entity holders
@@ -34,22 +34,29 @@ define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "
             // keyboard state
             this.keys = {};
 		},
-		start: function(player, map) {
+		start: function(player, mapFile) {
+            this.storage.setName(player);
+
             var startInterval = setInterval(() => {
                 if(this.renderer.isLoaded) {
-                    this.map = new Map(map.width, map.height);
-                    this.pathfinder = new Pathfinder(this.map);
-                    this.storage.setName(player);
+                    console.log("Loading map via Ajax.");
+                    this.map = new Map(mapFile);
+                    var mapInterval = setInterval(() => {
+                        if(this.map.isLoaded) {
+                            this.pathfinder = new Pathfinder(this.map);
 
-                    player.entities.forEach((e) => {
-                        this.receiveEntity(e);
-                    });
+                            player.entities.forEach((e) => {
+                                this.receiveEntity(e);
+                            });
 
-        			this.started = true;
-        			this.isStopped = false;
-        			this.state = States.play(this); // game state
+                			this.started = true;
+                			this.isStopped = false;
+                			this.state = States.play(this); // game state
 
-        			this.tick();
+                			this.tick();
+                            clearInterval(mapInterval);
+                        }
+                    }, 100);
                     clearInterval(startInterval);
                 }
             }, 100);

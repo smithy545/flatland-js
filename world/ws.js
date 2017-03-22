@@ -42,7 +42,7 @@ var ws = {
 							sendable.entities.push(world.entities[i]);
 						}
 					}
-					socket.emit(Types.MESSAGES.WELCOME, sendable, world.map.toSendable());
+					socket.emit(Types.MESSAGES.WELCOME, sendable, "map.json");
 				});
 			});
 			socket.on(Types.MESSAGES.MOVE, function(id, x, y) {

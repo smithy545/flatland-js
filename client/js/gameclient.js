@@ -9,8 +9,8 @@ define(["lib/socket.io", "entityfactory"], function(io, EntityFactory) {
 			});
 
 			conn.emit(Types.MESSAGES.HELLO, this.game.storage.id); // init handshake
-			conn.on(Types.MESSAGES.WELCOME, function(player, map) { // complete handshake
-				game.start(player, map);
+			conn.on(Types.MESSAGES.WELCOME, function(player, mapFile) { // complete handshake
+				game.start(player, mapFile);
 
 				conn.on(Types.MESSAGES.SPAWN, function(e) { // spawn entity in vision
 					game.receiveEntity(e);

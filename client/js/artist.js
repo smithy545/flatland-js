@@ -79,6 +79,10 @@ define([], function() {
             
                 ctx.restore();
             }
+		},
+		tile: function(ctx, tileset, map, type, x, y) {
+			var ts = map.tilesize;
+			ctx.drawImage(tileset, ts*(type%map.tilesetWidth), ts*Math.floor(type/map.tilesetWidth), ts, ts, x, y, TILESIZE, TILESIZE)
 		}
 	};
 

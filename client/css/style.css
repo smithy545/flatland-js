@@ -5,6 +5,10 @@ html, body {
   overflow: hidden;
 }
 
+canvas {
+	position: absolute;
+}
+
 #disconnectMessage {
 	
 }

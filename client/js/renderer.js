@@ -1,16 +1,22 @@
 define(["camera", "artist", "sprites", "sprite"], function(Camera, Artist, sprites, Sprite) {
 	var Renderer = Class.extend({
-		init: function(game, canvas) {
+		init: function(game, canvas, screen) {
 			this.game = game;	// parent game
 
 			this.isLoaded = false;
 
 			// drawing context
             this.context = (canvas && canvas.getContext) ? canvas.getContext("2d") : null;
+            this.screenContext = (screen && screen.getContext) ? screen.getContext("2d") : null;
 			this.canvas = canvas;	// drawing canvas
+			this.screen = screen;	// obscuring canvas
 
 			//this.sprites = sprites; unnecessary for now
 			this.spriteset = {};
+			this.spritesLoaded = false;
+			this.tileset = null;
+			this.tilesetLoaded = false;
+			this.loadTiles();
 			this.loadSprites();
 
 			this.resize();
@@ -23,11 +29,25 @@ define(["camera", "artist", "sprites", "sprite"], function(Camera, Artist, sprit
 					console.log("Sprite " + id + " loaded.");
 					counter--;
 					if(counter == 0) {
-						this.isLoaded = true;
+						this.spritesLoaded = true;
+						if(this.tilesetLoaded) {
+							this.isLoaded = true;
+						}
 					}
 				});
 			}
 		},
+		loadTiles: function() {
+        	this.tileset = new Image();
+        	this.tileset.src = "img/tileset.gif";
+
+        	this.tileset.onload = () => {
+        		this.tilesetLoaded = true;
+        		if(this.spritesLoaded) {
+        			this.isLoaded = true;
+        		}
+        	};
+ 		},
 		setScale: function(scale) {
 			this.camera.setScale(scale);
 		},
@@ -38,14 +58,23 @@ define(["camera", "artist", "sprites", "sprite"], function(Camera, Artist, sprit
 			var scale = this.camera.scale;
             this.context.translate(-this.camera.x * scale, -this.camera.y * scale);
             this.context.scale(scale, scale);
+            this.screenContext.translate(-this.camera.x * scale, -this.camera.y * scale);
+            this.screenContext.scale(scale, scale);
 		},
 		clearScreen: function() {
-			this.context.fillStyle = "#000";
-            this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			this.screenContext.clearRect(0, 0, this.screen.width, this.screen.height);
+		},
+		obscureUnseen: function() {
+			this.screenContext.globalAlpha = 0.1;
+			this.screenContext.fillStyle = "#000";
+			this.screenContext.fillRect(0, 0, this.screen.width, this.screen.height);
 		},
 		resize: function() {
 			this.canvas.width = window.innerWidth;
 			this.canvas.height = window.innerHeight;
+			this.screen.width = this.canvas.width;
+			this.screen.height = this.canvas.height;
 		},
 		getWidth: function() {
 			return this.canvas.width;
@@ -58,48 +87,58 @@ define(["camera", "artist", "sprites", "sprite"], function(Camera, Artist, sprit
 		},
 		panUp: function() {
 			if(this.camera.getY() > 0) {
-				this.camera.setY(this.camera.getY()-1);
+				this.camera.setY(this.camera.getY()-4);
 			}
 		},
 		panDown: function() {
-			if(this.camera.getY() < this.getHeight()) {
-				this.camera.setY(this.camera.getY()+1);
+			if(this.camera.getY() < this.game.map.height*TILESIZE) {
+				this.camera.setY(this.camera.getY()+4);
 			}
 		},
 		panLeft: function() {
 			if(this.camera.getX() > 0) {
-				this.camera.setX(this.camera.getX()-1);
+				this.camera.setX(this.camera.getX()-4);
 			}
 		},
 		panRight: function() {
-			if(this.camera.getX() < this.getWidth()) {
-				this.camera.setX(this.camera.getX()+1);
+			if(this.camera.getX() < this.game.map.width*TILESIZE) {
+				this.camera.setX(this.camera.getX()+4);
 			}
 		},
 		renderFrame: function() {
 			var ctx = this.context;
 
 			this.clearScreen();
+			this.obscureUnseen();
 
 			if(!this.game.isPaused) { // draw game
 	            ctx.save();
+	            this.screenContext.save();
+
+		        for(var x = -this.camera.getX()%TILESIZE; x < this.getWidth(); x += TILESIZE) {
+		        	for(var y = -this.camera.getY()%TILESIZE; y < this.getHeight(); y += TILESIZE) {
+		        		Artist['tile'](ctx, this.tileset, this.game.map, this.game.map.getTileAt(
+		        			Math.floor((x+this.camera.getX())/TILESIZE),
+		        			Math.floor((y+this.camera.getY())/TILESIZE)),
+		        		x, y);
+		        	}
+		        }
 
 	            this.setCameraView(); // set translation and scaling
 		        
-		        // draw viewable tiles (only actors and props so unowned entities not included)
-		        // TODO: look into ways to reduce redundant rect drawing (dirty rects?)
-		        ctx.fillStyle = "#fff";
+		        // unshadow visible areas
 	            this.game.forEachActor((e) => {
 	            	var vr;
             		vr = e.viewRadius*TILESIZE;
-            		ctx.fillRect(e.getX()-vr, e.getY()-vr, 2*vr+1, 2*vr+1);
+            		this.screenContext.clearRect(e.getX()-vr, e.getY()-vr, 2*vr+1, 2*vr+1);
 	            });
 	            this.game.forEachProp((e) => {
 	            	var vr;
             		vr = e.viewRadius*TILESIZE;
-            		ctx.fillRect(e.getX()-vr, e.getY()-vr, 2*vr+1, 2*vr+1);
+            		this.screenContext.clearRect(e.getX()-vr, e.getY()-vr, 2*vr+1, 2*vr+1);
 	            });
 
+	            // draw entities
 	            this.game.forEachEntity((e) => {
 	            	if(e.isVisible() && this.camera.canSee(e)) {
 	            		if(Artist[e.type]) {
@@ -111,12 +150,14 @@ define(["camera", "artist", "sprites", "sprite"], function(Camera, Artist, sprit
 	            	}
 	            });
 
+	            this.screenContext.restore();
 		        ctx.restore();
 		    }
 
 		    //draw ui
 		    this.game.forEachUIElement((e) => {
             	if(e.isVisible() && this.camera.canSee(e)) {
+            		this.screenContext.clearRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
             		if(Artist[e.type]) {
             			Artist[e.type](ctx, e);
             		} else {

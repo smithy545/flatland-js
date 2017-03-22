@@ -1,18 +1,30 @@
 define([], function() {
 	var Map = Class.extend({
-		init: function(width, height) {
-			this.entityGrid = [];
-			this.pathingGrid = [];
-			this.width = width;
-			this.height = height;
-			for(var i = 0; i < height; i++) {
-				this.entityGrid[i] = [];
-				this.pathingGrid[i] = [];
-				for(var j = 0; j < width; j++) {
-					this.entityGrid[i][j] = null;
-					this.pathingGrid[i][j] = false;
+		init: function(filename) {
+			this.isLoaded = false;
+            var filepath = "/" + filename;
+            $.get(filepath, (data) => {
+				this.entityGrid = [];
+				this.pathingGrid = [];
+
+				this.width = data.width;
+				this.height = data.height;
+
+				this.tiles = data.tiles;
+				this.tilesize = data.tilesize;
+				this.tilesetWidth = data.tilesetWidth;
+				this.tilesetHeight = data.tilesetHeight;
+
+				for(var i = 0; i < this.height; i++) {
+					this.entityGrid[i] = [];
+					this.pathingGrid[i] = [];
+					for(var j = 0; j < this.width; j++) {
+						this.entityGrid[i][j] = null;
+						this.pathingGrid[i][j] = false;
+					}
 				}
-			}
+				this.isLoaded = true;
+            }, 'json');
 		},
 		entityAt: function(x, y) {
 			return this.entityGrid[y][x];
@@ -42,6 +54,9 @@ define([], function() {
 					this.pathingGrid[e.getGridY()+i][e.getGridX()+j] = false;
 				}
 			}
+		},
+		getTileAt: function(x, y) {
+			return this.tiles[y*this.width+x];
 		}
 	});
 

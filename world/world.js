@@ -11,7 +11,7 @@ var World = Class.extend({
 		this.players = {};
 		this.entities = {};
 		this.entityId = 1;
-		this.map = new Map(5000, 5000);
+		this.map = new Map("../shared/map.json");
 
 		this.addEntity(EntityFactory["Monster"](5, 5));
 	},

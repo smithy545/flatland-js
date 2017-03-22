@@ -8,7 +8,8 @@ requirejs.config({
 define(["jquery", "lib/underscore.min", "../class", "game", "../util", "../constants"], function($, _, Class, Game) {
 
 	var canvas = document.getElementById("game");
-	var game = new Game(canvas);
+	var screen = document.getElementById("screen");
+	var game = new Game(canvas, screen);
 
 	$(window).resize(function() {
 		game.renderer.resize();
