@@ -16,7 +16,9 @@ define(["lib/socket.io", "entityfactory"], function(io, EntityFactory) {
 					game.receiveEntity(e);
 				});
 				conn.on(Types.MESSAGES.DESPAWN, function(id) { // remove entity from vision
-					game.removeEntity(id);
+					if(game.hasEntity(id)) {
+						game.removeEntity(id);
+					}
 				});
 				conn.on(Types.MESSAGES.MOVE, function(id, x, y) {
 					game.map.unregisterEntity(game.entities[id]);

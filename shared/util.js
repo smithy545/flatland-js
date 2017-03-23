@@ -17,6 +17,27 @@ Util.surrounds = function(outer, inner) {
 		&& contains(outer, inner.getX()+inner.getWidth(), inner.getY()+inner.getHeight());
 }
 
+Util.nextFreeTile = function(grid, tile) {
+	var i = 0;
+	while(tile.x + i < grid[0].length && tile.x - i >= 0
+		&& tile.y + i < grid.length && tile.y - i >= 0) {
+		for(var x = tile.x - i; x < tile.x + i; x++) {
+			for(var y = tile.y - i; y < tile.y + i; y++) {
+				if(!grid[y][x]) {
+					return {
+						x: x,
+						y: y
+					};
+				}
+			}
+		}
+
+		i++;
+	}
+
+	return null;
+}
+
 if(!(typeof module == 'undefined')) {
 	module.exports = Util;
 }

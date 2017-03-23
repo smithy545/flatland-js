@@ -19,17 +19,20 @@ var World = Class.extend({
 		id = parseInt(id);
 		if(!this.players[id]) {
 			this.players[id] = new Player(name, id, socket);
-			this.addEntity(EntityFactory["Person"](id, 10, 10)); // give commander
+			for(var i = 0; i < 5; i++) {
+				this.addEntity(EntityFactory["Person"](id, 10+i, 10)); // give commander
+			}
 		}
 		
 		return this.players[id];
 	},
 	addEntity: function(e) {
 		e.id = this.entityId++;
+		e.setVisibleTo(e.owner, e.id);
 		this.entities[e.id] = e;
 		if(e.owner > 0) {
 			this.players[e.owner].entities.push(e);
-			this.players[e.owner].createDirtyAreas();
+			this.players[e.owner].createDirtyArea();
 		}
 		this.updateVisible(e);
 		this.map.registerEntity(e);
@@ -39,56 +42,102 @@ var World = Class.extend({
 	},
 	canMove: function(id, x, y) {
 		var e = this.entities[id];
-		return Types.getKind(e.type) == "actor" && !this.map.blocked(x, y, e.width, e.height);
+		return Types.getKind(e.type) == "actor"
+			&& !this.map.blocked(x, y, e.getWidth(), e.getHeight())
+			&& this.map.isNextTo(e, x, y);
 	},
 	updateVisible: function(e) {
+		// for new entity
+		var visibleTo, couldSee;
 		// check if players can see entity
 		for(var id in this.players) {
-			if(id !== e.owner) { // owner can always see
-				if(this.players[id].canSee(e)) { // if visible
-					if(!e.visibleTo[id]) {
-						e.visibleTo[id] = true;
+			if(parseInt(id) !== e.owner) { // owner can always see
+				visibleTo = this.players[id].whoCanSee(e);
+				couldSee = Object.keys(e.visibleTo[id]).length > 0;
+				if(visibleTo.length > 0) { // if visible
+					e.visibleTo[id] = {};
+					for(var i = 0; i < visibleTo.length; i++) {
+						e.setVisibleTo(id, visibleTo[i]);
+					}
+					if(!couldSee) { // if new entity
 						this.players[id].socket.emit(Types.MESSAGES.SPAWN, e.toSendable());
 					}
-				} else if(e.visibleTo[id]){ // otherwise despawn
+				} else if(couldSee) { // if removing entity
 					this.players[id].socket.emit(Types.MESSAGES.DESPAWN, e.id);
-					delete e.visibleTo[id];
+				}
+			}
+		}
+
+		// check if owner can see new entities
+		var vr = Types.VIEWDISTANCE[e.type];
+		var viewBox = new Area(e.x-vr, e.y-vr, 2*vr+1, 2*vr+1);
+		var ent, viewable;
+		for(var id in this.entities) {
+			ent = this.entities[id];
+			if(ent.owner != e.owner) { // if someone elses ent
+				viewable = viewBox.collides(ent);
+				if(ent.visibleTo[e.owner] && Object.keys(ent.visibleTo[e.owner]).length > 0) { // if owner could see before
+					if(!ent.visibleTo[e.owner][e.id] && viewable) { // add this entity as being seen
+						ent.setVisibleTo(e.owner, e.id);
+					} else if(ent.visibleTo[e.owner][e.id] && !viewable) { // remove as being seen by e
+						ent.setInvisibleTo(e.owner, e.id);
+						if(Object.keys(ent.visibleTo[e.owner]).length == 0) { // despawn if last seeing entity
+							this.players[e.owner].socket.emit(Types.MESSAGES.DESPAWN, id);
+						}
+					}
+				} else if(viewable) { // if couldn't see but can now
+					ent.setVisibleTo(e.owner, e.id);
+					this.players[e.owner].socket.emit(Types.MESSAGES.SPAWN, ent.toSendable());
 				}
 			}
 		}
 	},
 	updateVisibleAndMove: function(e) {
+		var visibleTo, couldSee;
 		// check if moved into sight of new player
 		for(var id in this.players) {
 			if(parseInt(id) !== e.owner) { // owner can always see
-				if(this.players[id].canSee(e)) { // add to player view
-					if(e.visibleTo[id]) { // if visible move
+				visibleTo = this.players[id].whoCanSee(e);
+				couldSee = Object.keys(e.visibleTo[id]).length > 0;
+				if(visibleTo.length > 0) { // add to player view
+					e.visibleTo[id] = {};
+					for(var i = 0; i < visibleTo.length; i++) {
+						e.setVisibleTo(id, visibleTo[i]);
+					}
+
+					if(couldSee) { // if visible move
 						this.players[id].socket.emit(Types.MESSAGES.MOVE, e.id, e.x, e.y);
 					} else { // else spawn
-						e.visibleTo[id] = true;
 						this.players[id].socket.emit(Types.MESSAGES.SPAWN, e.toSendable());
 					}
-				} else { // remove from player view
+				} else if(couldSee) { // remove from player view
+					e.visibleTo[id] = {};
 					this.players[id].socket.emit(Types.MESSAGES.DESPAWN, e.id);
-					delete e.visibleTo[id];
 				}
-			} else { // move if owned-may have to change later
+			} else { // move if owned
 				this.players[id].socket.emit(Types.MESSAGES.MOVE, e.id, e.x, e.y);
 			}
 		}
 		// check if moved into/out of sight of new entity
 		var vr = Types.VIEWDISTANCE[e.type];
 		var viewBox = new Area(e.x-vr, e.y-vr, 2*vr+1, 2*vr+1);
-		var viewable;
+		var ent, viewable;
 		for(var id in this.entities) {
-			if(id != e.id) {
-				viewable = viewBox.collides(this.entities[id]);
-				if(!this.entities[id].visibleTo[e.owner] && viewable) {
-					this.entities[id].visibleTo[e.owner] = true;
-					this.players[e.owner].socket.emit(Types.MESSAGES.SPAWN, this.entities[id].toSendable());
-				} else if(this.entities[id].visibleTo[e.owner] && !viewable) {
-					this.entities[id].visibleTo[e.owner] = false
-					this.players[e.owner].socket.emit(Types.MESSAGES.DESPAWN, id);
+			ent = this.entities[id];
+			if(ent.owner != e.owner) { // if someone elses ent
+				viewable = viewBox.collides(ent);
+				if(ent.visibleTo[e.owner] && Object.keys(ent.visibleTo[e.owner]).length > 0) { // if owner could see before
+					if(!ent.visibleTo[e.owner][e.id] && viewable) { // add this entity as being seen
+						ent.setVisibleTo(e.owner, e.id);
+					} else if(ent.visibleTo[e.owner][e.id] && !viewable) { // remove as being seen by e
+						ent.setInvisibleTo(e.owner, e.id);
+						if(Object.keys(ent.visibleTo[e.owner]).length == 0) { // despawn if last seeing entity
+							this.players[e.owner].socket.emit(Types.MESSAGES.DESPAWN, id);
+						}
+					}
+				} else if(viewable) { // if couldn't see but can now
+					ent.setVisibleTo(e.owner, e.id);
+					this.players[e.owner].socket.emit(Types.MESSAGES.SPAWN, ent.toSendable());
 				}
 			}
 		}
@@ -98,7 +147,7 @@ var World = Class.extend({
 		this.map.unregisterEntity(e);
 		e.setPosition(x, y); // move to pos
 		this.map.registerEntity(e);
-		this.players[e.owner].updateDirtyAreas(e); // update owner sight blocks
+		this.players[e.owner].createDirtyArea(e); // update owner sight block
 		this.updateVisibleAndMove(e); // update who can see entity/send move signal
 	}
 });

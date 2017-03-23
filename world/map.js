@@ -38,6 +38,9 @@ var Map = Class.extend({
 		}
 		return false;
 	},
+	isNextTo(e, x, y) {
+		return Math.abs(e.getX()-x) <= 1 && Math.abs(e.getY()-y) <= 1;
+	},
 	registerEntity: function(e) {
 		this.entityGrid[e.y][e.x] = e;
 		for(var i = 0; i < e.height; i++) {

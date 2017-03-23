@@ -10,8 +10,7 @@ var Entity = Class.extend({
 		this.id = null;
 		this.owner = owner;
 		this.type = type;
-		this.visibleTo = {};
-		this.visibleTo[owner] = true;
+		this.visibleTo = {}; // set after id is defined
 		this.state = "idle_down";
 
 		if(this.type == "Person") {
@@ -25,6 +24,15 @@ var Entity = Class.extend({
 				luck: 0,
 			};
 		}
+	},
+	setVisibleTo: function(ownerId, entityId) {
+		if(!this.visibleTo[ownerId]) {
+			this.visibleTo[ownerId] = {};
+		}
+		this.visibleTo[ownerId][entityId] = true;
+	},
+	setInvisibleTo: function(ownerId, entityId) {
+		delete this.visibleTo[ownerId][entityId];
 	},
 	getX: function() {
 		return this.x;

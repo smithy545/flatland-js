@@ -21,11 +21,13 @@ define(["state", "uihandler"], function(State, UIHandler) {
 		mouseup: function(mouse) {
 			var camera = this.game.renderer.camera;
 			if(mouse.button === 2) { // move units
-				this.selected.forEach((actor) => {
-					actor.setTarget({
+				var target = {
 						x: Math.floor((mouse.x+camera.getX())/TILESIZE),
 						y: Math.floor((mouse.y+camera.getY())/TILESIZE)
-					});
+				};
+				this.selected.forEach((actor) => {
+					actor.setTarget(target);
+					target = Util.nextFreeTile(this.game.map.pathingGrid, target);
 				});
 			} else if(mouse.button === 0) { // select units
 				var rect = this.UIElements["selection_rect"];
