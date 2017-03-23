@@ -7,11 +7,11 @@ var Map = require('./map');
 var Area = require('./area');
 
 var World = Class.extend({
-	init: function() {
+	init: function(mapFile) {
 		this.players = {};
 		this.entities = {};
 		this.entityId = 1;
-		this.map = new Map("../shared/map.json");
+		this.map = new Map("../shared/" + mapFile);
 
 		this.addEntity(EntityFactory["Monster"](5, 5));
 	},

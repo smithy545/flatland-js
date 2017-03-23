@@ -25,16 +25,22 @@ define(["state", "uihandler"], function(State, UIHandler) {
 				ui_height, ui_height, "#888", "#000");
 			this.UIElements["entity_watcher"] = UIHandler.createRect(0, 0, width, height, "#fff", "#fff", 
 				null, null, function() {
+					var fontSize = 16;
 					if(self.selected) {
-						ui_elements["entity_x"] = UIHandler.createText(width-ui_height+5, height-ui_height+16,
-							"x = " + self.selected.gridX, 16);
-						ui_elements["entity_y"] = UIHandler.createText(width-ui_height+5, height-ui_height+32,
-							"y = " + self.selected.gridY, 16);
+						ui_elements["entity_type"] = UIHandler.createText(width-ui_height+5, height-ui_height+fontSize,
+							"type = " + self.selected.type, fontSize);
+						ui_elements["entity_x"] = UIHandler.createText(width-ui_height+5, height-ui_height+fontSize*2,
+							"x = " + self.selected.gridX, fontSize);
+						ui_elements["entity_y"] = UIHandler.createText(width-ui_height+5, height-ui_height+fontSize*3,
+							"y = " + self.selected.gridY, fontSize);
+
 					} else {
-						ui_elements["entity_x"] = UIHandler.createText(width-ui_height+5, height-ui_height+16,
-							"x = ", 16);
-						ui_elements["entity_y"] = UIHandler.createText(width-ui_height+5, height-ui_height+32,
-							"y = ", 16);
+						ui_elements["entity_type"] = UIHandler.createText(width-ui_height+5, height-ui_height+fontSize,
+							"type = ", fontSize);
+						ui_elements["entity_x"] = UIHandler.createText(width-ui_height+5, height-ui_height+fontSize*2,
+							"x = ", fontSize);
+						ui_elements["entity_y"] = UIHandler.createText(width-ui_height+5, height-ui_height+fontSize*3,
+							"y = ", fontSize);
 					}
 				});
 			this.UIElements["entity_watcher"].setInvisible();

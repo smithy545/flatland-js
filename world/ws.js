@@ -21,9 +21,10 @@ String.prototype.hashCode = function() {
 var ws = {
 	init: function(server) {
 		var io = require('socket.io')(server);
+		var mapFile = "world1.json";
 
 		console.log("Creating world..");
-		world = new World();
+		world = new World(mapFile);
 		console.log("World created.");
 
 		io.on('connection', function(socket) {
@@ -43,7 +44,7 @@ var ws = {
 							sendable.entities.push(world.entities[i]);
 						}
 					}
-					socket.emit(Types.MESSAGES.WELCOME, sendable, "map.json");
+					socket.emit(Types.MESSAGES.WELCOME, sendable, mapFile);
 				});
 			});
 			socket.on(Types.MESSAGES.MOVE, function(id, x, y) {
