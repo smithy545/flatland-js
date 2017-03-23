@@ -10,7 +10,7 @@ define(["state", "uihandler"], function(State, UIHandler) {
 				camera = game.renderer.camera;
 
 			var width = game.renderer.getWidth(), height = game.renderer.getHeight(),
-				ui_width, ui_height = 200;
+				ui_width, ui_height = 100;
 			var ui_elements = this.UIElements, self = this;
 			this.UIElements["main_panel"] = UIHandler.createRect(0, height-ui_height, width, ui_height, "#ccc", "#000");
 			this.UIElements["selection_rect"] = UIHandler.createRectOutline(
