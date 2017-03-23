@@ -6,24 +6,49 @@ define(["state", "uihandler"], function(State, UIHandler) {
 			this.selected = null;
 
 			// generate ui
-			this.UIElements["main_panel"] = UIHandler.createRect(0, game.renderer.getHeight()-200, game.renderer.getWidth(), 200, "#ccc", "#000");
+			var mouse = game.mouse,
+				camera = game.renderer.camera;
 
+			this.UIElements["main_panel"] = UIHandler.createRect(0, game.renderer.getHeight()-200, game.renderer.getWidth(), 200, "#ccc", "#000");
+			this.UIElements["selection_rect"] = UIHandler.createRectOutline(
+				mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
+				mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
+				TILESIZE, TILESIZE, "#ccc");
 		},
 		mousedown: function(mouse) {
 			var camera = this.game.renderer.camera;
 			if(mouse.button === 0) {
+
+				// make rect yellow for highlighting
+				this.UIElements["selection_rect"] = UIHandler.createRectOutline(
+					mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
+					mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
+					TILESIZE, TILESIZE, "#f00");
 				/* remove multiple entity selection for now
 
 				this.UIElements["selection_rect"] = UIHandler.createRectOutline(
 					mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
 					mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
-					0, 0, "#ccc");
+					TILESIZE, TILESIZE, "#ccc");
 				*/
 			}
 		},
 		mouseup: function(mouse) {
-			var camera = this.game.renderer.camera;
+			var camera = this.game.renderer.camera,
+				entity,
+				x, y;
 			if(mouse.button === 2) { // move units
+				if(this.selected) {
+					var target = {
+						x: Math.floor((mouse.x+camera.getX())/TILESIZE),
+						y: Math.floor((mouse.y+camera.getY())/TILESIZE)
+					};
+					if(!this.game.map.blocked(target.x, target.y)) {
+						this.selected.setTarget(target);
+					} else {
+						console.error("Cannot path there. Tile is taken.");
+					}
+				}
 
 				/* remove multiple entity selection for now
 
@@ -37,6 +62,25 @@ define(["state", "uihandler"], function(State, UIHandler) {
 				});
 				*/
 			} else if(mouse.button === 0) { // select units
+				x = Math.floor((mouse.x + camera.getX())/TILESIZE);
+				y = Math.floor((mouse.y + camera.getY())/TILESIZE);
+
+				entity = this.game.entityAt(x, y);
+				if(this.selected) {
+					this.selected.setSelected(false);
+				}
+				if(entity) {
+					this.selected = entity;
+					entity.setSelected();
+				} else {
+					this.selected = null;
+				}
+
+				// make rect gray again
+				this.UIElements["selection_rect"] = UIHandler.createRectOutline(
+					mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
+					mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
+					TILESIZE, TILESIZE, "#ccc");				
 
 				/* remove multiple entity selection for now
 
@@ -78,11 +122,32 @@ define(["state", "uihandler"], function(State, UIHandler) {
 			}
 		},
 		mousemove: function(mouse) {
+			var camera = this.game.renderer.camera,
+				rect = this.UIElements["selection_rect"];
+
+			if(rect.getX() != mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE
+			|| rect.getY() != mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE) {
+				if(mouse.pressed) {
+					this.UIElements["selection_rect"] = UIHandler.createRectOutline(
+						mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
+						mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
+						TILESIZE, TILESIZE, "#f00");
+				} else {
+					this.UIElements["selection_rect"] = UIHandler.createRectOutline(
+						mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
+						mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
+						TILESIZE, TILESIZE, "#ccc");
+				}
+			}
+
+			/* remove multiple entity selection for now
+
 			if(this.UIElements["selection_rect"]) {
 				var rect = this.UIElements["selection_rect"];
 				rect.setWidth(mouse.x-rect.getX());
 				rect.setHeight(mouse.y-rect.getY());
 			}
+			*/
 		},
 		update: function(time) {
 			// move camera

@@ -143,6 +143,10 @@ define(["camera", "artist", "sprites", "sprite"], function(Camera, Artist, sprit
 	            	if(e.isVisible() && this.camera.canSee(e)) {
 	            		if(Artist[e.type]) {
 	            			Artist[e.type](ctx, e);
+	            			if(e.isSelected()) {
+	            				ctx.strokeStyle = "#ff0";
+			            		ctx.strokeRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+	            			}
 	            		} else {
 		            		// no drawing function, just use square
 		            		ctx.strokeRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());

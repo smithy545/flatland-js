@@ -9,6 +9,7 @@ define([], function() {
 			this.viewRadius = 0;
 			this.owner = -1;
 			this.state = null;
+			this.selected = false;
 
 			// for sprite entities
 			this.isLoaded = false;
@@ -56,6 +57,16 @@ define([], function() {
 		getGridHeight: function() {
 			return this.height;
 		},
+		isSelected: function() {
+			return this.selected;
+		},
+		setSelected: function(val) {
+			if(typeof val !== 'undefined') {
+				this.selected = val;
+			} else {
+				this.selected = true;
+			}
+		},
 		setWidth: function(width) {
 			if(width > 0) {
 				this.width = Math.ceil(width/TILESIZE);
@@ -77,7 +88,11 @@ define([], function() {
 			this.height = height;
 		},
 		setVisible: function(val) {
-			this.visible = val || true;
+			if(typeof val !== 'undefined') {
+				this.visible = val;
+			} else {
+				this.visible = true;
+			}
 		},
 		setInvisible: function() {
 			this.visible = false;
