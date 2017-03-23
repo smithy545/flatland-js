@@ -3,7 +3,7 @@ define(["state", "uihandler"], function(State, UIHandler) {
 		init: function(game) {
 			this._super(game);
 
-			this.selected = [];
+			this.selected = null;
 
 			// generate ui
 			this.UIElements["main_panel"] = UIHandler.createRect(0, game.renderer.getHeight()-200, game.renderer.getWidth(), 200, "#ccc", "#000");
@@ -12,15 +12,21 @@ define(["state", "uihandler"], function(State, UIHandler) {
 		mousedown: function(mouse) {
 			var camera = this.game.renderer.camera;
 			if(mouse.button === 0) {
+				/* remove multiple entity selection for now
+
 				this.UIElements["selection_rect"] = UIHandler.createRectOutline(
 					mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
 					mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
 					0, 0, "#ccc");
+				*/
 			}
 		},
 		mouseup: function(mouse) {
 			var camera = this.game.renderer.camera;
 			if(mouse.button === 2) { // move units
+
+				/* remove multiple entity selection for now
+
 				var target = {
 						x: Math.floor((mouse.x+camera.getX())/TILESIZE),
 						y: Math.floor((mouse.y+camera.getY())/TILESIZE)
@@ -29,7 +35,11 @@ define(["state", "uihandler"], function(State, UIHandler) {
 					actor.setTarget(target);
 					target = Util.nextFreeTile(this.game.map.pathingGrid, target);
 				});
+				*/
 			} else if(mouse.button === 0) { // select units
+
+				/* remove multiple entity selection for now
+
 				var rect = this.UIElements["selection_rect"];
 				var x, y, entity;
 
@@ -64,6 +74,7 @@ define(["state", "uihandler"], function(State, UIHandler) {
 					}
 				}
 				delete this.UIElements["selection_rect"];
+				*/
 			}
 		},
 		mousemove: function(mouse) {
