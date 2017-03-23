@@ -23,7 +23,7 @@ var World = Class.extend({
 				this.addEntity(EntityFactory["Person"](id, 10+i, 10)); // give commander
 			}
 		}
-		
+
 		return this.players[id];
 	},
 	addEntity: function(e) {
@@ -42,6 +42,7 @@ var World = Class.extend({
 	},
 	canMove: function(id, x, y) {
 		var e = this.entities[id];
+
 		return Types.getKind(e.type) == "actor"
 			&& !this.map.blocked(x, y, e.getWidth(), e.getHeight())
 			&& this.map.isNextTo(e, x, y);

@@ -35,6 +35,7 @@ var ws = {
 						return socket.emit(Types.MESSAGES.ERROR, "Could not find user.");
 					}
 					socket.player = world.welcomePlayer(row.name, parseInt(id), socket);
+					socket.player.socket = socket;
 					var sendable = socket.player.toSendable();
 					sendable.entities = [];
 					for(var i in world.entities) {
