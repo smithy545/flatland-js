@@ -64,6 +64,9 @@ define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "
         hasEntity: function(id) {
             return this.entities[id] != undefined;
         },
+        getEntity: function(id) {
+            return this.entities[id];
+        },
         receiveEntity: function(e) {
             var entity = EntityFactory[e.type](e);
             if(entity.type === 'sprite') {

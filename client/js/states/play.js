@@ -90,6 +90,7 @@ define(["state", "uihandler"], function(State, UIHandler) {
 						this.selected.setTarget(target);
 					} else {
 						console.error("Cannot path there. Tile is taken.");
+						this.selected.setTarget(Util.nextFreeTile(this.game.map.pathingGrid, target))
 					}
 				}
 

@@ -27,7 +27,14 @@ define(["lib/socket.io", "entityfactory"], function(io, EntityFactory) {
 				});
 			});
 			conn.on(Types.MESSAGES.ERROR, function(msg) { //handle error
-				console.log("Error: " + msg);
+				console.error("Server Error: " + msg);
+				var id, code = arguments[1];
+				switch(code) {
+					case Types.MESSAGES.MOVE:
+						id = arguments[2];
+						game.getEntity(id).path = []; // start pathing over
+						break;
+				}
 			});
 		},
 		emit: function() {

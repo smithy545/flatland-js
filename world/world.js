@@ -54,7 +54,7 @@ var World = Class.extend({
 		for(var id in this.players) {
 			if(parseInt(id) !== e.owner) { // owner can always see
 				visibleTo = this.players[id].whoCanSee(e);
-				couldSee = Object.keys(e.visibleTo[id]).length > 0;
+				couldSee = e.visibleTo[id] && Object.keys(e.visibleTo[id]).length > 0;
 				if(visibleTo.length > 0) { // if visible
 					e.visibleTo[id] = {};
 					for(var i = 0; i < visibleTo.length; i++) {

@@ -51,7 +51,7 @@ var ws = {
 				if(socket.player && world.canOrder(socket.player.id, id) && world.canMove(id, x, y)) {
 					world.move(id, x, y);
 				} else {
-					socket.emit(Types.MESSAGES.ERROR, "Cannot move entity there.");
+					socket.emit(Types.MESSAGES.ERROR, "Cannot move entity there.", Types.MESSAGES.MOVE, id);
 				}
 			});
 
