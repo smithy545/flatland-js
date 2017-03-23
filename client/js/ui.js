@@ -1,19 +1,23 @@
 define(["entity"], function(Entity) {
 	var UI = Entity.extend({
-		init: function(onTrigger, onUntrigger) {
+		init: function(onTrigger, onUntrigger, update) {
 			this._super();
 
 			this.trigger_callback = onTrigger;
 			this.untrigger_callback = onUntrigger;
+			this.update = update;
+		},
+		setUpdate: function(callback) {
+			this.update = callback;
 		},
 		trigger: function() {
 			if(this.trigger_callback) {
-				this.trigger_callback.apply(this, arguments);
+				return this.trigger_callback.apply(this, arguments);
 			}
 		},
 		untrigger: function() {
 			if(this.untrigger_callback) {
-				this.untrigger_callback.apply(this, arguments);
+				return this.untrigger_callback.apply(this, arguments);
 			}
 		}
 	});

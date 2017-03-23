@@ -26,7 +26,7 @@ define(["camera", "artist", "sprites", "sprite"], function(Camera, Artist, sprit
 			var counter = Object.keys(sprites).length;
 			for(var name in sprites) {
 				this.spriteset[name] = new Sprite(sprites[name], (id) => {
-					console.log("Sprite " + id + " loaded.");
+					console.info("Sprite " + id + " loaded.");
 					counter--;
 					if(counter == 0) {
 						this.spritesLoaded = true;
@@ -160,7 +160,7 @@ define(["camera", "artist", "sprites", "sprite"], function(Camera, Artist, sprit
 
 		    //draw ui
 		    this.game.forEachUIElement((e) => {
-            	if(e.isVisible() && this.camera.canSee(e)) {
+            	if(e.isVisible()) {
             		this.screenContext.clearRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
             		if(Artist[e.type]) {
             			Artist[e.type](ctx, e);

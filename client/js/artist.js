@@ -42,6 +42,15 @@ define([], function() {
 
 			ctx.restore();
 		},
+		text: function(ctx, element) {
+			ctx.save();
+
+			ctx.font = element.font + " " + element.fontSize + "px";
+			ctx.fillStyle = element.color;
+			ctx.fillText(element.text, element.getX(), element.getY());
+
+			ctx.restore();
+		},
 		sprite: function(ctx, entity) {
             var sprite = entity.sprite,
                 anim = entity.currentAnimation;

@@ -1,7 +1,7 @@
 define(["ui"], function(UI) {
 	var Rect = UI.extend({
-		init: function(x, y, width, height, color, outlineColor, onTrigger, onUntrigger) {
-			this._super(onTrigger, onUntrigger);
+		init: function(x, y, width, height, color, outlineColor, onTrigger, onUntrigger, update) {
+			this._super(onTrigger, onUntrigger, update);
 
 			this.setX(x);
 			this.setY(y);

@@ -9,33 +9,70 @@ define(["state", "uihandler"], function(State, UIHandler) {
 			var mouse = game.mouse,
 				camera = game.renderer.camera;
 
-			this.UIElements["main_panel"] = UIHandler.createRect(0, game.renderer.getHeight()-200, game.renderer.getWidth(), 200, "#ccc", "#000");
+			var width = game.renderer.getWidth(), height = game.renderer.getHeight(),
+				ui_width, ui_height = 200;
+			var ui_elements = this.UIElements, self = this;
+			this.UIElements["main_panel"] = UIHandler.createRect(0, height-ui_height, width, ui_height, "#ccc", "#000");
 			this.UIElements["selection_rect"] = UIHandler.createRectOutline(
 				mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
 				mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
 				TILESIZE, TILESIZE, "#ccc");
+			this.UIElements["build_button"] = UIHandler.createRect(0,
+				height-ui_height,
+				TILESIZE*8+15, ui_height, "#888", "#000");
+			this.UIElements["entity_view"] = UIHandler.createRect(width-ui_height,
+				height-ui_height,
+				ui_height, ui_height, "#888", "#000");
+			this.UIElements["entity_watcher"] = UIHandler.createRect(0, 0, width, height, "#fff", "#fff", 
+				null, null, function() {
+					if(self.selected) {
+						ui_elements["entity_x"] = UIHandler.createText(width-ui_height+5, height-ui_height+16,
+							"x = " + self.selected.gridX, 16);
+						ui_elements["entity_y"] = UIHandler.createText(width-ui_height+5, height-ui_height+32,
+							"y = " + self.selected.gridY, 16);
+					} else {
+						ui_elements["entity_x"] = UIHandler.createText(width-ui_height+5, height-ui_height+16,
+							"x = ", 16);
+						ui_elements["entity_y"] = UIHandler.createText(width-ui_height+5, height-ui_height+32,
+							"y = ", 16);
+					}
+				});
+			this.UIElements["entity_watcher"].setInvisible();
+
 		},
 		mousedown: function(mouse) {
-			var camera = this.game.renderer.camera;
+			var camera = this.game.renderer.camera,
+				triggered = false,
+				ui;
 			if(mouse.button === 0) {
+				for(var i in this.UIElements) {
+					ui = this.UIElements[i];
+					if(Util.contains(ui, mouse.x, mouse.y)) {
+						triggered = ui.trigger() || triggered;
+					}
+				}
 
-				// make rect yellow for highlighting
-				this.UIElements["selection_rect"] = UIHandler.createRectOutline(
-					mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
-					mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
-					TILESIZE, TILESIZE, "#f00");
-				/* remove multiple entity selection for now
+				if(!triggered) {
+					// make rect yellow for highlighting
+					this.UIElements["selection_rect"] = UIHandler.createRectOutline(
+						mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
+						mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
+						TILESIZE, TILESIZE, "#f00");
+					/* remove multiple entity selection for now
 
-				this.UIElements["selection_rect"] = UIHandler.createRectOutline(
-					mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
-					mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
-					TILESIZE, TILESIZE, "#ccc");
-				*/
+					this.UIElements["selection_rect"] = UIHandler.createRectOutline(
+						mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
+						mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
+						TILESIZE, TILESIZE, "#ccc");
+					*/
+				}					
 			}
 		},
 		mouseup: function(mouse) {
 			var camera = this.game.renderer.camera,
+				triggered = false,
 				entity,
+				ui,
 				x, y;
 			if(mouse.button === 2) { // move units
 				if(this.selected) {
@@ -62,63 +99,72 @@ define(["state", "uihandler"], function(State, UIHandler) {
 				});
 				*/
 			} else if(mouse.button === 0) { // select units
-				x = Math.floor((mouse.x + camera.getX())/TILESIZE);
-				y = Math.floor((mouse.y + camera.getY())/TILESIZE);
-
-				entity = this.game.entityAt(x, y);
-				if(this.selected) {
-					this.selected.setSelected(false);
-				}
-				if(entity) {
-					this.selected = entity;
-					entity.setSelected();
-				} else {
-					this.selected = null;
+				for(var i in this.UIElements) {
+					ui = this.UIElements[i];
+					if(Util.contains(ui, mouse.x, mouse.y)) {
+						triggered = ui.untrigger() || triggered;
+					}
 				}
 
-				// make rect gray again
-				this.UIElements["selection_rect"] = UIHandler.createRectOutline(
-					mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
-					mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
-					TILESIZE, TILESIZE, "#ccc");				
+				if(!triggered) {
+					x = Math.floor((mouse.x + camera.getX())/TILESIZE);
+					y = Math.floor((mouse.y + camera.getY())/TILESIZE);
 
-				/* remove multiple entity selection for now
+					entity = this.game.entityAt(x, y);
+					if(this.selected) {
+						this.selected.setSelected(false);
+					}
+					if(entity) {
+						this.selected = entity;
+						entity.setSelected();
+					} else {
+						this.selected = null;
+					}
 
-				var rect = this.UIElements["selection_rect"];
-				var x, y, entity;
+					// make rect gray again
+					this.UIElements["selection_rect"] = UIHandler.createRectOutline(
+						mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
+						mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
+						TILESIZE, TILESIZE, "#ccc");				
 
-				// handle possible negative rect
-				if(rect.getWidth() < 0) {
-					x = rect.getX()+rect.getWidth();
-					rect.setWidth(-rect.getWidth());
-				} else {
-					x = rect.getX();
-				}
-				if(rect.getHeight() < 0) {
-					y = rect.getY()+rect.getHeight();
-					rect.setHeight(-rect.getHeight());
-				} else {
-					y = rect.getY();
-				}
+					/* remove multiple entity selection for now
 
-				x = (x+camera.getX())/TILESIZE;
-				y = (y+camera.getY())/TILESIZE;
+					var rect = this.UIElements["selection_rect"];
+					var x, y, entity;
 
-				this.selected = []; // clear list
-				for(var i = x; i < x+rect.getGridWidth(); i++) {
-					for(var j = y; j < y+rect.getGridHeight(); j++) {
-						entity = this.game.entityAt(i, j);
-						if(entity) {
-							if(entity instanceof Array) {
-								// handle list
-							} else if(entity.owner === this.game.id){
-								this.selected.push(entity);
+					// handle possible negative rect
+					if(rect.getWidth() < 0) {
+						x = rect.getX()+rect.getWidth();
+						rect.setWidth(-rect.getWidth());
+					} else {
+						x = rect.getX();
+					}
+					if(rect.getHeight() < 0) {
+						y = rect.getY()+rect.getHeight();
+						rect.setHeight(-rect.getHeight());
+					} else {
+						y = rect.getY();
+					}
+
+					x = (x+camera.getX())/TILESIZE;
+					y = (y+camera.getY())/TILESIZE;
+
+					this.selected = []; // clear list
+					for(var i = x; i < x+rect.getGridWidth(); i++) {
+						for(var j = y; j < y+rect.getGridHeight(); j++) {
+							entity = this.game.entityAt(i, j);
+							if(entity) {
+								if(entity instanceof Array) {
+									// handle list
+								} else if(entity.owner === this.game.id){
+									this.selected.push(entity);
+								}
 							}
 						}
 					}
+					delete this.UIElements["selection_rect"];
+					*/
 				}
-				delete this.UIElements["selection_rect"];
-				*/
 			}
 		},
 		mousemove: function(mouse) {
@@ -172,6 +218,14 @@ define(["state", "uihandler"], function(State, UIHandler) {
 					entity.currentAnimation.update(time);
 				}
 			});
+
+			var ui;
+			for(var i in this.UIElements) {
+				ui = this.UIElements[i];
+				if(ui.update instanceof Function) {
+					ui.update(this.game, time);
+				}
+			};
 		}
 	});
 

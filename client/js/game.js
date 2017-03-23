@@ -39,7 +39,7 @@ define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "
 
             var startInterval = setInterval(() => {
                 if(this.renderer.isLoaded) {
-                    console.log("Loading map via Ajax.");
+                    console.info("Loading map via Ajax.");
                     this.map = new Map(mapFile);
                     var mapInterval = setInterval(() => {
                         if(this.map.isLoaded) {
