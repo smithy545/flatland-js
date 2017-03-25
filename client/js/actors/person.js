@@ -6,7 +6,9 @@ define(["actor"], function(Actor) {
 			this.setWidth(1);
 			this.setHeight(1);
 
-			this.type = "Person";
+			this.type = "sprite";
+			this.spriteName = "person";
+
 			this.viewRadius = Types.VIEWDISTANCE["Person"];
 
 			this.character = character;
@@ -16,8 +18,21 @@ define(["actor"], function(Actor) {
 			if(this.path.length > 0) {
 				var move = this.path.pop();
 				if(move) {
+					if(move[0] != this.gridX) {
+						if(move[0] > this.gridX) {
+							this.setState('walk_right')
+						} else {
+							this.setState('walk_left');
+						}
+
+					} else if(move[1] > this.gridY) {
+						this.setState('walk_down');
+					} else {
+						this.setState('walk_up');
+					}
 					return [Types.MESSAGES.MOVE, this.id, move[0], move[1]];
 				} else {
+					this.setState('idle_down');
 					this.target = this.queue.pop();
 				}
 			} else if(this.target) {

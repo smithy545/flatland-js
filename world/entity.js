@@ -1,7 +1,7 @@
 var Class = require('../shared/class');
 
 var Entity = Class.extend({
-	init: function(owner, type, x, y, width, height) {
+	init: function(owner, type, x, y, width, height, passable) {
 		// all in grid coords
 		this.x = x;
 		this.y = y;
@@ -12,6 +12,8 @@ var Entity = Class.extend({
 		this.type = type;
 		this.visibleTo = {}; // set after id is defined
 		this.state = "idle_down";
+		this.item = null;
+		this.passable = passable || false;
 
 		if(this.type == "Person") {
 			/* This is an assortment of the persons character traits.
@@ -46,6 +48,12 @@ var Entity = Class.extend({
 	getHeight: function() {
 		return this.height;
 	},
+	getItem: function() {
+		return this.item;
+	},
+	setItem: function(item) {
+		this.item = item;
+	},
 	setX: function(x) {
 		this.x = x;
 	},
@@ -55,6 +63,13 @@ var Entity = Class.extend({
 	setPosition: function(x, y) {
 		this.x = x;
 		this.y = y;
+	},
+	setPassable: function(val) {
+		if(typeof val !== 'undefined') {
+			this.passable = val;
+		} else {
+			this.passable = true;
+		}
 	},
 	toSendable: function() {
 		var obj = {

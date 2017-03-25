@@ -15,7 +15,7 @@ var Map = Class.extend({
 			this.entityGrid[i] = [];
 			this.pathingGrid[i] = [];
 			for(var j = 0; j < this.width; j++) {
-				this.entityGrid[i][j] = null;
+				this.entityGrid[i][j] = {};
 				this.pathingGrid[i][j] = false;
 			}
 		}
@@ -42,15 +42,15 @@ var Map = Class.extend({
 		return Math.abs(e.getX()-x) <= 1 && Math.abs(e.getY()-y) <= 1;
 	},
 	registerEntity: function(e) {
-		this.entityGrid[e.y][e.x] = e;
+		this.entityGrid[e.y][e.x][e.id] = e;
 		for(var i = 0; i < e.height; i++) {
 			for(var j = 0; j < e.width; j++) {
-				this.pathingGrid[e.y+i][e.x+j] = true;
+				this.pathingGrid[e.y+i][e.x+j] = !e.passable;
 			}
 		}
 	},
 	unregisterEntity: function(e) {
-		this.entityGrid[e.y][e.x] = null;
+		delete this.entityGrid[e.y][e.x][e.id];
 		for(var i = 0; i < e.height; i++) {
 			for(var j = 0; j < e.width; j++) {
 				this.pathingGrid[e.y+i][e.x+j] = false;

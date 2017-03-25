@@ -9,7 +9,9 @@ define([], function() {
 			this.viewRadius = 0;
 			this.owner = -1;
 			this.state = null;
-			this.selected = false;
+			this.selected = false
+			this.item = null; // what is it item
+			this.passable = false;
 
 			// for sprite entities
 			this.isLoaded = false;
@@ -29,6 +31,12 @@ define([], function() {
 					this.setAnimation(state, 100);
 				}
 			}
+		},
+		getItem: function() {
+			return this.item;
+		},
+		setItem: function(item) {
+			this.item = item;
 		},
 		getState: function() {
 			return this.state;

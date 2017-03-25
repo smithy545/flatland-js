@@ -1,20 +1,5 @@
 define([], function() {
 	var Artist = {
-		Person: function(ctx, e) {
-			var halfWidth = e.getWidth()*0.5;
-
-			ctx.save();
-
-			ctx.fillStyle = "#f00";
-			ctx.strokeStyle = "#000";
-			ctx.beginPath();
-			ctx.arc(e.getX()+halfWidth, e.getY()+halfWidth, halfWidth, 0, 2*Math.PI);
-			ctx.fill();
-			ctx.stroke();
-			ctx.closePath();
-
-			ctx.restore();
-		},
 		Tree: function(ctx, e) {
 			ctx.save();
 
@@ -45,7 +30,7 @@ define([], function() {
 		text: function(ctx, element) {
 			ctx.save();
 
-			ctx.font = element.font + " " + element.fontSize + "px";
+			ctx.font = element.fontSize + "px " + element.font;
 			ctx.fillStyle = element.color;
 			ctx.fillText(element.text, element.getX(), element.getY());
 

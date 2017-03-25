@@ -1,5 +1,6 @@
 
 define(['text!../sprites/monster.json',
+		'text!../sprites/person.json',
         ], function() {
     
     var sprites = {};

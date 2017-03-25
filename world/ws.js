@@ -47,12 +47,57 @@ var ws = {
 					socket.emit(Types.MESSAGES.WELCOME, sendable, mapFile);
 				});
 			});
+
 			socket.on(Types.MESSAGES.MOVE, function(id, x, y) {
 				if(socket.player && world.canOrder(socket.player.id, id) && world.canMove(id, x, y)) {
 					world.move(id, x, y);
 				} else {
 					socket.emit(Types.MESSAGES.ERROR, "Cannot move entity there.", Types.MESSAGES.MOVE, id);
 				}
+			});
+
+			socket.on(Types.MESSAGES.GATHER, function(id, x, y) {
+
+			});
+
+			socket.on(Types.MESSAGES.PICKUP, function(id, pickupId) {
+				if(socket.player && world.canOrder(socket.player.id, id) && world.sameTile(id, pickupId)
+				&& Types.getKind(world.getEntity(pickupId).type) == 'item'
+				&& Types.getKind(world.getEntity(id).type) == 'actor') {
+					world.pickup(id, pickupId);
+				} else {
+					socket.emit(Types.MESSAGES.ERROR, "Cannot pickup that.", Types.MESSAGES.PICKUP);
+				}
+			});
+
+			socket.on(Types.MESSAGES.DROP, function(id, dropId) {
+				if(socket.player && world.canOrder(socket.player.id, id)
+				&& Types.getKind(world.getEntity(id).type) == 'actor'
+				&& world.getEntity(id).item != null) {
+					world.drop(id, dropId);
+				} else {
+					socket.emit(Types.MESSAGES.ERROR, "Cannot pickup that.", Types.MESSAGES.PICKUP);
+				}
+			});
+
+			socket.on(Types.MESSAGES.MINE, function(id, x, y) {
+
+			});
+
+			socket.on(Types.MESSAGES.ATTACK, function(id, x, y) {
+
+			});
+
+			socket.on(Types.MESSAGES.BUILD, function(id, building, x, y) {
+
+			});
+
+			socket.on(Types.MESSAGES.EAT, function(id, x, y) {
+
+			});
+
+			socket.on(Types.MESSAGES.DRINK, function(id, x, y) {
+
 			});
 
 			socket.on('disconnect', function() {

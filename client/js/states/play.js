@@ -1,4 +1,4 @@
-define(["state", "uihandler"], function(State, UIHandler) {
+define(["state", "uihandler", "actor"], function(State, UIHandler, Actor) {
 	var Play = State.extend({
 		init: function(game) {
 			this._super(game);
@@ -12,14 +12,83 @@ define(["state", "uihandler"], function(State, UIHandler) {
 			var width = game.renderer.getWidth(), height = game.renderer.getHeight(),
 				ui_width, ui_height = 100;
 			var ui_elements = this.UIElements, self = this;
-			this.UIElements["main_panel"] = UIHandler.createRect(0, height-ui_height, width, ui_height, "#ccc", "#000");
 			this.UIElements["selection_rect"] = UIHandler.createRectOutline(
 				mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
 				mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
 				TILESIZE, TILESIZE, "#ccc");
-			this.UIElements["build_button"] = UIHandler.createRect(0,
-				height-ui_height,
+
+			this.UIElements["main_panel"] = UIHandler.createRect(0, height-ui_height, width, ui_height, "#ccc", "#000");
+			this.UIElements["build_bar"] = UIHandler.createRect(0, height-ui_height,
 				TILESIZE*8+15, ui_height, "#888", "#000");
+			var buttonHeight = (ui_height-20)/3, buttonFontSize = 24;
+			this.UIElements["structure_button"] = UIHandler.createRectOutline(5, 5+height-ui_height, TILESIZE*4, buttonHeight, "#000",
+				function() {
+					ui_elements["structure_button_active"] = UIHandler.createRect(5, 5+height-ui_height, TILESIZE*4, buttonHeight, "#000", "#fff");
+					ui_elements["structure_text_active"] = UIHandler.createText(10, buttonFontSize+5+height-ui_height, "Structure", buttonFontSize, null, "#fff");
+				},
+				function() {
+					delete ui_elements["structure_button_active"];
+					delete ui_elements["structure_text_active"];
+				});
+			this.UIElements["structure_text"] = UIHandler.createText(10, buttonFontSize+5+height-ui_height, "Structure", buttonFontSize);
+
+			this.UIElements["other1_button"] = UIHandler.createRectOutline(5, 10+buttonHeight+height-ui_height, TILESIZE*4, buttonHeight, "#000",
+				function() {
+					ui_elements["other1_button_active"] = UIHandler.createRect(5, 10+buttonHeight+height-ui_height, TILESIZE*4, buttonHeight, "#000", "#fff");
+					ui_elements["other1_text_active"] = UIHandler.createText(10, buttonFontSize+10+buttonHeight+height-ui_height, "other1", buttonFontSize, null, "#fff");
+				},
+				function() {
+					delete ui_elements["other1_button_active"];
+					delete ui_elements["other1_text_active"];
+				});
+			this.UIElements["other1_text"] = UIHandler.createText(10, buttonFontSize+10+buttonHeight+height-ui_height, "other1", buttonFontSize);
+
+			this.UIElements["other2_button"] = UIHandler.createRectOutline(5, 15+2*buttonHeight+height-ui_height, TILESIZE*4, buttonHeight, "#000",
+				function() {
+					ui_elements["other2_button_active"] = UIHandler.createRect(5, 15+2*buttonHeight+height-ui_height, TILESIZE*4, buttonHeight, "#000", "#fff");
+					ui_elements["other2_text_active"] = UIHandler.createText(10, buttonFontSize+15+2*buttonHeight+height-ui_height, "other2", buttonFontSize, null, "#fff");
+				},
+				function() {
+					delete ui_elements["other2_button_active"];
+					delete ui_elements["other2_text_active"];
+				});
+			this.UIElements["other2_text"] = UIHandler.createText(10, buttonFontSize+15+2*buttonHeight+height-ui_height, "other2", buttonFontSize);
+
+			this.UIElements["other3_button"] = UIHandler.createRectOutline(10+TILESIZE*4, 5+height-ui_height, TILESIZE*4, buttonHeight, "#000",
+				function() {
+					ui_elements["other3_button_active"] = UIHandler.createRect(10+TILESIZE*4, 5+height-ui_height, TILESIZE*4, buttonHeight, "#000", "#fff");
+					ui_elements["other3_text_active"] = UIHandler.createText(15+TILESIZE*4, buttonFontSize+5+height-ui_height, "other3", buttonFontSize, null, "#fff");
+				},
+				function() {
+					delete ui_elements["other3_button_active"];
+					delete ui_elements["other3_text_active"];
+				});
+			this.UIElements["other3_text"] = UIHandler.createText(15+TILESIZE*4, buttonFontSize+5+height-ui_height, "other3", buttonFontSize);
+
+			this.UIElements["other4_button"] = UIHandler.createRectOutline(10+TILESIZE*4, 10+buttonHeight+height-ui_height, TILESIZE*4, buttonHeight, "#000",
+				function() {
+					ui_elements["other4_button_active"] = UIHandler.createRect(10+TILESIZE*4, 10+buttonHeight+height-ui_height, TILESIZE*4, buttonHeight, "#000", "#fff");
+					ui_elements["other4_text_active"] = UIHandler.createText(15+TILESIZE*4, buttonFontSize+10+buttonHeight+height-ui_height, "other4", buttonFontSize, null, "#fff");
+				},
+				function() {
+					delete ui_elements["other4_button_active"];
+					delete ui_elements["other4_text_active"];
+				});
+			this.UIElements["other4_text"] = UIHandler.createText(15+TILESIZE*4, buttonFontSize+10+buttonHeight+height-ui_height, "other4", buttonFontSize);
+
+			this.UIElements["other5_button"] = UIHandler.createRectOutline(10+TILESIZE*4, 15+2*buttonHeight+height-ui_height, TILESIZE*4, buttonHeight, "#000",
+				function() {
+					ui_elements["other5_button_active"] = UIHandler.createRect(10+TILESIZE*4, 15+2*buttonHeight+height-ui_height, TILESIZE*4, buttonHeight, "#000", "#fff");
+					ui_elements["other5_text_active"] = UIHandler.createText(15+TILESIZE*4, buttonFontSize+15+2*buttonHeight+height-ui_height, "other5", buttonFontSize, null, "#fff");
+				},
+				function() {
+					delete ui_elements["other5_button_active"];
+					delete ui_elements["other5_text_active"];
+				});
+			this.UIElements["other5_text"] = UIHandler.createText(15+TILESIZE*4, buttonFontSize+15+2*buttonHeight+height-ui_height, "other5", buttonFontSize);
+
+
+
 			this.UIElements["entity_view"] = UIHandler.createRect(width-ui_height,
 				height-ui_height,
 				ui_height, ui_height, "#888", "#000");
@@ -63,7 +132,7 @@ define(["state", "uihandler"], function(State, UIHandler) {
 					this.UIElements["selection_rect"] = UIHandler.createRectOutline(
 						mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
 						mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
-						TILESIZE, TILESIZE, "#f00");
+						TILESIZE, TILESIZE, "#0ff");
 					/* remove multiple entity selection for now
 
 					this.UIElements["selection_rect"] = UIHandler.createRectOutline(
@@ -78,6 +147,7 @@ define(["state", "uihandler"], function(State, UIHandler) {
 			var camera = this.game.renderer.camera,
 				triggered = false,
 				entity,
+				foundEntities,
 				ui,
 				x, y;
 			if(mouse.button === 2) { // move units
@@ -117,7 +187,15 @@ define(["state", "uihandler"], function(State, UIHandler) {
 					x = Math.floor((mouse.x + camera.getX())/TILESIZE);
 					y = Math.floor((mouse.y + camera.getY())/TILESIZE);
 
-					entity = this.game.entityAt(x, y);
+					entity = null;
+					foundEntities = this.game.entityAt(x, y);
+					for(var i in foundEntities) {
+						if(foundEntities[i] instanceof Actor) {
+							entity = foundEntities[i];
+						} else if(entity == null) {
+							entity = foundEntities[i];
+						}
+					}
 					if(this.selected) {
 						this.selected.setSelected(false);
 					}
@@ -176,20 +254,17 @@ define(["state", "uihandler"], function(State, UIHandler) {
 		},
 		mousemove: function(mouse) {
 			var camera = this.game.renderer.camera,
-				rect = this.UIElements["selection_rect"];
+				rect = this.UIElements["selection_rect"],
+				x = mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
+				y = mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE;
 
-			if(rect.getX() != mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE
-			|| rect.getY() != mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE) {
+			if(rect.getX() != x || rect.getY() != y) {
 				if(mouse.pressed) {
-					this.UIElements["selection_rect"] = UIHandler.createRectOutline(
-						mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
-						mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
-						TILESIZE, TILESIZE, "#f00");
+					this.UIElements["selection_rect"] = UIHandler.createRectOutline(x, y, TILESIZE, TILESIZE, "#0ff");
+				} else if(this.game.map.blocked(Math.floor(x/TILESIZE), Math.floor(y/TILESIZE)) && this.selected) {
+					this.UIElements["selection_rect"] = UIHandler.createRectOutline(x, y, TILESIZE, TILESIZE, "#f00");
 				} else {
-					this.UIElements["selection_rect"] = UIHandler.createRectOutline(
-						mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
-						mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
-						TILESIZE, TILESIZE, "#ccc");
+					this.UIElements["selection_rect"] = UIHandler.createRectOutline(x, y, TILESIZE, TILESIZE, "#ccc");
 				}
 			}
 
@@ -214,18 +289,22 @@ define(["state", "uihandler"], function(State, UIHandler) {
 				this.game.renderer.panRight();
 			}
 
+			// update actors
 			this.game.forEachActor((actor) => {
 				var action = actor.update(this.game.pathfinder);
 				if(action) {
 					this.game.client.emitList(action);
 				}
 			});
+
+			// update animations
 			this.game.forEachEntity((entity) => {
 				if(entity.currentAnimation) {
 					entity.currentAnimation.update(time);
 				}
 			});
 
+			// update ui
 			var ui;
 			for(var i in this.UIElements) {
 				ui = this.UIElements[i];

@@ -19,7 +19,7 @@ define([], function() {
 					this.entityGrid[i] = [];
 					this.pathingGrid[i] = [];
 					for(var j = 0; j < this.width; j++) {
-						this.entityGrid[i][j] = null;
+						this.entityGrid[i][j] = {};
 						this.pathingGrid[i][j] = false;
 					}
 				}
@@ -42,15 +42,15 @@ define([], function() {
 			return false;
 		},
 		registerEntity: function(e) {
-			this.entityGrid[e.getGridY()][e.getGridX()] = e;
+			this.entityGrid[e.getGridY()][e.getGridX()][e.id] = e;
 			for(var i = 0; i < e.height; i++) {
 				for(var j = 0; j < e.width; j++) {
-					this.pathingGrid[e.getGridY()+i][e.getGridX()+j] = true;
+					this.pathingGrid[e.getGridY()+i][e.getGridX()+j] = !e.passable;
 				}
 			}
 		},
 		unregisterEntity: function(e) {
-			this.entityGrid[e.getGridY()][e.getGridX()] = null;
+			delete this.entityGrid[e.getGridY()][e.getGridX()][e.id];
 			for(var i = 0; i < e.height; i++) {
 				for(var j = 0; j < e.width; j++) {
 					this.pathingGrid[e.getGridY()+i][e.getGridX()+j] = false;

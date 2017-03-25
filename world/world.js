@@ -5,6 +5,7 @@ var Entity = require('./entity');
 var EntityFactory = require('./entityfactory');
 var Map = require('./map');
 var Area = require('./area');
+var fs = require('fs');
 
 var World = Class.extend({
 	init: function(mapFile) {
@@ -19,12 +20,20 @@ var World = Class.extend({
 		id = parseInt(id);
 		if(!this.players[id]) {
 			this.players[id] = new Player(name, id, socket);
-			for(var i = 0; i < 5; i++) {
-				this.addEntity(EntityFactory["Person"](id, 10+i, 10)); // give commander
-			}
+
+			// setup spawn area
+			
+			this.addEntity(EntityFactory["Person"](id, 10+i, 10)); // give commander
 		}
 
 		return this.players[id];
+	},
+	generateTerrain: function(mapFile) {
+		var data = "";
+
+		// generate terrain here
+
+		fs.writeSync(mapFile, data);
 	},
 	addEntity: function(e) {
 		e.id = this.entityId++;
@@ -36,6 +45,17 @@ var World = Class.extend({
 		}
 		this.updateVisible(e);
 		this.map.registerEntity(e);
+	},
+	getEntity: function(id) {
+		return this.entities[id];
+	},
+	sameTile: function(id1, id2) {
+		var e1 = this.getEntity(id1),
+			e2 = this.getEntity(id2);
+
+		if(e1 && e2) {
+			return e1.getX() == e2.getX() && e1.getY() == e2.getY();
+		}
 	},
 	canOrder: function(ownerId, entityId) {
 		return this.entities[entityId].owner == ownerId
@@ -144,12 +164,25 @@ var World = Class.extend({
 		}
 	},
 	move: function(id, x, y) {
-		var e = this.entities[id];
+		var e = this.getEntity(id);
 		this.map.unregisterEntity(e);
 		e.setPosition(x, y); // move to pos
 		this.map.registerEntity(e);
 		this.players[e.owner].createDirtyArea(e); // update owner sight block
 		this.updateVisibleAndMove(e); // update who can see entity/send move signal
+	},
+	pickup: function(entityId, itemId) {
+		var entity = this.getEntity(entityId),
+			item = this.getEntity(itemId);
+		this.map.unregisterEntity(item);
+		entity.setItem(item);
+	},
+	drop: function(entityId, itemId) {
+		var entity = this.getEntity(entityId),
+			item = this.getEntity(itemId);
+		if(this.map.entityGrid)
+		this.map.unregisterEntity(item);
+		entity.setItem(item);
 	}
 });
 

@@ -15,18 +15,25 @@ Types = {
 		RESEARCH: 10,
 		TRADE: 11,
 		EAT: 12,
-		DRINK: 13
+		DRINK: 13,
+		MINE: 14,
+		PICKUP: 15,
+		BUILD: 16,
+		DROP: 17
 	},
 	VIEWDISTANCE: {
 		Person: 10,
 		Tree: 0,
+		SpawnArea: 3,
 		Monster: 4
 	},
 	ACTORS: {
 		Person: 1,
+		Monster: 2,
 	},
 	PROPS: {
 		Tree: 1,
+		SpawnArea: 2,
 	},
 	DIRECTIONS: {
 		UP: 1,
