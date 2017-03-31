@@ -48,6 +48,8 @@ define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "
                             player.entities.forEach((e) => {
                                 this.receiveEntity(e);
                             });
+                            console.log(player.entities);
+                            this.renderer.camera.focusGridObject(player.entities[0]);
 
                 			this.started = true;
                 			this.isStopped = false;

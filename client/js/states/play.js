@@ -133,8 +133,8 @@ define(["state", "uihandler", "actor"], function(State, UIHandler, Actor) {
 				if(!triggered) {
 					// make rect yellow for highlighting
 					this.UIElements["selection_rect"] = UIHandler.createRectOutline(
-						mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
-						mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
+						mouse.x-(mouse.x+camera.getX())%TILESIZE,
+						mouse.y-(mouse.y+camera.getY())%TILESIZE,
 						TILESIZE, TILESIZE, "#0ff");
 					/* remove multiple entity selection for now
 
@@ -154,7 +154,7 @@ define(["state", "uihandler", "actor"], function(State, UIHandler, Actor) {
 				ui,
 				x, y;
 			if(mouse.button === 2) { // move units
-				if(this.selected) {
+				if(this.selected && this.selected.owner == this.game.id) {
 					var target = {
 						x: Math.floor((mouse.x+camera.getX())/TILESIZE),
 						y: Math.floor((mouse.y+camera.getY())/TILESIZE)
@@ -258,8 +258,8 @@ define(["state", "uihandler", "actor"], function(State, UIHandler, Actor) {
 		mousemove: function(mouse) {
 			var camera = this.game.renderer.camera,
 				rect = this.UIElements["selection_rect"],
-				x = mouse.x-mouse.x%TILESIZE-camera.getX()%TILESIZE,
-				y = mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE;
+				x = mouse.x-(camera.getX()+mouse.x)%TILESIZE,
+				y = mouse.y-(camera.getY()+mouse.y)%TILESIZE;
 
 			if(rect.getX() != x || rect.getY() != y) {
 				if(mouse.pressed) {

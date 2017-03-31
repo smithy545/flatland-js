@@ -17,13 +17,22 @@ var World = Class.extend({
 		this.addEntity(EntityFactory["Monster"](5, 5));
 	},
 	welcomePlayer: function(name, id, socket) {
+		var x, y;
 		id = parseInt(id);
 		if(!this.players[id]) {
 			this.players[id] = new Player(name, id, socket);
 
 			// setup spawn area
-			
-			this.addEntity(EntityFactory["Person"](id, 10, 10)); // give commander
+			do {
+				x = Math.floor(Math.random()*this.map.width);
+				y = Math.floor(Math.random()*this.map.height);
+			} while(this.map.blocked(x, y, 2, 2));
+			// give commander
+			this.addEntity(EntityFactory["Person"](id, x, y));
+			// give peasants
+			this.addEntity(EntityFactory["Person"](id, x+1, y));
+			this.addEntity(EntityFactory["Person"](id, x, y+1));
+			this.addEntity(EntityFactory["Person"](id, x+1, y+1));
 		}
 
 		return this.players[id];
