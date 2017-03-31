@@ -23,7 +23,7 @@ var World = Class.extend({
 
 			// setup spawn area
 			
-			this.addEntity(EntityFactory["Person"](id, 10+i, 10)); // give commander
+			this.addEntity(EntityFactory["Person"](id, 10, 10)); // give commander
 		}
 
 		return this.players[id];
