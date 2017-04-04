@@ -82,7 +82,7 @@ var Entity = Class.extend({
 			id: this.id,
 			state: this.state
 		};
-		if(this.type == "Person") {
+		if(this.type == "person") {
 			obj['character'] = this.character;
 		}
 

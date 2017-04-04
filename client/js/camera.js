@@ -46,36 +46,36 @@ define([], function() {
 		focusEntity: function(e) {
 			if(e.getX() > this.renderer.getWidth()/2) {
 				this.setX(e.getX()-this.renderer.getWidth()/2);
-			} else {
+			} else { // TODO: add right edge checking
 				this.setX(0);
 			}
 			if(e.getY() > this.renderer.getHeight()/2) {
 				this.setY(e.getY()-this.renderer.getHeight()/2);
-			} else {
+			} else { // TODO: add bottom edge checking
 				this.setY(0);
 			}
 		},
 		focusObject: function(o) {
 			if(o.x > this.renderer.getWidth()/2) {
 				this.setX(o.x-this.renderer.getWidth()/2);
-			} else {
+			} else { // TODO: add right edge checking
 				this.setX(0);
 			}
 			if(o.y > this.renderer.getHeight()/2) {
 				this.setY(o.y-this.renderer.getHeight()/2);
-			} else {
+			} else { // TODO: add bottom edge checking
 				this.setY(0);
 			}
 		},
 		focusGridObject: function(o) {
 			if(o.x*TILESIZE > this.renderer.getWidth()/2) {
 				this.setX(o.x*TILESIZE-this.renderer.getWidth()/2);
-			} else {
+			} else { // TODO: add right edge checking
 				this.setX(0);
 			}
 			if(o.y*TILESIZE > this.renderer.getHeight()/2) {
 				this.setY(o.y*TILESIZE-this.renderer.getHeight()/2);
-			} else {
+			} else { // TODO: add bottom edge checking
 				this.setY(0);
 			}
 		}

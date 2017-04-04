@@ -101,7 +101,7 @@ define(["camera", "artist", "sprites", "sprite"], function(Camera, Artist, sprit
 			}
 		},
 		panRight: function() {
-			if(this.camera.getX() < this.game.map.width*TILESIZE) {
+			if(this.camera.getX() < this.game.map.width*TILESIZE-this.getWidth()) {
 				this.camera.setX(this.camera.getX()+4);
 			}
 		},

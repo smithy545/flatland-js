@@ -92,23 +92,23 @@ var ws = {
 			});
 
 			socket.on(Types.Messages.TRAIN, function(id, type, x, y) {
-
+				
 			});
 
 			socket.on(Types.Messages.EAT, function(id, x, y) {
-
+				
 			});
 
 			socket.on(Types.Messages.DRINK, function(id, x, y) {
-
+				
 			});
 
 			socket.on(Types.Messages.MINE, function(id, x, y) {
-
+				
 			});
 
 			socket.on(Types.Messages.ATTACK, function(id, x, y) {
-
+				
 			});
 
 			socket.on('disconnect', function() {

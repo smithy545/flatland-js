@@ -66,8 +66,10 @@ var Types = {
 Kinds = {
 	person: [Types.Entities.PERSON, "actor", 10],
     monster: [Types.Entities.MONSTER, "actor", 3],
+
     tree: [Types.Entities.TREE, "prop", 0],
     wall: [Types.Entities.WALL, "prop", 1],
+    
     fruit: [Types.Entities.FRUIT, "item", 0],
 };
 
