@@ -97,7 +97,7 @@ define(["state", "uihandler", "actor"], function(State, UIHandler, Actor) {
 				ui_height, ui_height, "#888", "#000");
 			this.UIElements["entity_watcher"] = UIHandler.createRect(0, 0, width, height, "#fff", "#fff", 
 				null, null, function() {
-					var fontSize = 16;
+					var fontSize = 12;
 					if(self.selected) {
 						ui_elements["entity_type"] = UIHandler.createText(width-ui_height+5, height-ui_height+fontSize,
 							"type = " + self.selected.type, fontSize);

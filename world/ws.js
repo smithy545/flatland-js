@@ -94,9 +94,9 @@ var ws = {
 
 			socket.on(Types.Messages.BUILD, function(id, type, x, y) {
 				if(socket.player && world.canOrder(socket.player.id, id)
-				&& Types.getKind(world.getEntity(id).type) == 'prop'
-				&& Types.getKind(type) == 'actor') {
-					world.build(id, buildId, x, y);
+				&& Types.getKind(world.getEntity(id).type) == 'actor'
+				&& Types.getKind(type) == 'prop') {
+					world.build(id, type, x, y);
 				} else {
 					socket.emit(Types.Messages.ERROR, "Cannot build that.", Types.Messages.BUILD);
 				}

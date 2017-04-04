@@ -230,10 +230,10 @@ var World = Class.extend({
 
 		return gathered;
 	},
-	build: function(id, building, x, y) {
-
+	build: function(id, type, x, y) {
+		
 	},
-	train: function(id, unit, x, y) {
+	train: function(id, type, x, y) {
 
 	}
 });

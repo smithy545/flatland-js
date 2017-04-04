@@ -62,6 +62,9 @@ define([], function() {
 		},
 		getTileAt: function(x, y) {
 			return this.tiles[y*this.width+x];
+		},
+		updateTile: function(type, x, y) {
+			this.tiles[y*this.width+x] = type;
 		}
 	});
 

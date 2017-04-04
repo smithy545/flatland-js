@@ -20,7 +20,8 @@ var Types = {
 		PICKUP: 15,
 		DROP: 16,
 		BUILD: 17,
-		TRAIN: 18
+		TRAIN: 18,
+		UPDATETILE: 19
 	},
 
 	Entities: {
