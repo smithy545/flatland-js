@@ -10,7 +10,7 @@ var Types = {
 		MOVE: 7,
 		PICKUP: 15,
 		DROP: 16,
-		UPDATETILE: 19
+		UPDATETILE: 19,
 
 		// WIP
 		BUILD: 17,

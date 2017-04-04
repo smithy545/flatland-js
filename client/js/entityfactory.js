@@ -18,4 +18,4 @@ define(["actors/person", "actors/monster", "props/tree", "props/wall", "items/fr
 	};
 
 	return EntityFactory;
-});=
+});

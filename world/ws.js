@@ -49,9 +49,9 @@ var ws = {
 			});
 
 			socket.on(Types.Messages.MOVE, function(id, x, y) {
-				if(socket.player && world.canOrder(socket.player.id, id) && world.canMove(id, x, y)) {
-					world.move(id, x, y);
-				} else {
+				if(!(socket.player && world.canOrder(socket.player.id, id)
+				&& world.canMove(id, x, y)
+				&& world.move(id, x, y))) {
 					socket.emit(Types.Messages.ERROR, "Cannot move entity there.", Types.Messages.MOVE, id);
 				}
 			});
@@ -65,21 +65,19 @@ var ws = {
 			});
 
 			socket.on(Types.Messages.PICKUP, function(id, pickupId) {
-				if(socket.player && world.canOrder(socket.player.id, id) && world.sameTile(id, pickupId)
-				&& Types.isItem(world.getEntity(pickupId).type)
-				&& Types.getKind(world.getEntity(id).type) == 'actor') {
-					world.pickup(id, pickupId);
-				} else {
+				if(!(socket.player && world.canOrder(socket.player.id, id) && world.sameTile(id, pickupId)
+				&& Types.getKindAsString(world.getEntity(pickupId).type) == 'item'
+				&& Types.getKindAsString(world.getEntity(id).type) == 'actor'
+				&& world.pickup(id, pickupId))) {
 					socket.emit(Types.Messages.ERROR, "Cannot pick that up.", Types.Messages.PICKUP);
 				}
 			});
 
 			socket.on(Types.Messages.DROP, function(id, dropId) {
-				if(socket.player && world.canOrder(socket.player.id, id)
+				if(!(socket.player && world.canOrder(socket.player.id, id)
 				&& Types.getKind(world.getEntity(id).type) == 'actor'
-				&& world.getEntity(id).item != null) {
-					world.drop(id, dropId);
-				} else {
+				&& world.getEntity(id).item != null
+				&& world.drop(id, dropId))) {
 					socket.emit(Types.Messages.ERROR, "Cannot drop that.", Types.Messages.DROP);
 				}
 			});
@@ -93,11 +91,10 @@ var ws = {
 			});
 
 			socket.on(Types.Messages.BUILD, function(id, type, x, y) {
-				if(socket.player && world.canOrder(socket.player.id, id)
+				if(!(socket.player && world.canOrder(socket.player.id, id)
 				&& Types.getKind(world.getEntity(id).type) == 'actor'
-				&& Types.getKind(type) == 'prop') {
-					world.build(id, type, x, y);
-				} else {
+				&& Types.getKind(type) == 'prop'
+				&& world.build(id, type, x, y))) {
 					socket.emit(Types.Messages.ERROR, "Cannot build that.", Types.Messages.BUILD);
 				}
 			});

@@ -95,6 +95,7 @@ var World = Class.extend({
 			&& this.map.isNextTo(e, x, y);
 	},
 	broadcast: function() {
+		// first arg should be entity, second be message, remaining be message args
 		var args = Array.prototype.slice.call(arguments); // convert to array
 		var entity = args.shift();
 		var socket;
@@ -207,6 +208,8 @@ var World = Class.extend({
 		this.map.registerEntity(e);
 		this.players[e.owner].createDirtyArea(e); // update owner sight block
 		this.updateVisibleAndMove(e); // update who can see entity/send move signal
+		
+		return true;
 	},
 	pickup: function(entityId, itemId) {
 		var entity = this.getEntity(entityId),
