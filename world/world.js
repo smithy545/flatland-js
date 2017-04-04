@@ -28,11 +28,12 @@ var World = Class.extend({
 		if(!this.players[id]) {
 			this.players[id] = new Player(name, id, socket);
 
-			// setup spawn area
+			// find random unblocked spawn spot
 			do {
 				x = Math.floor(Math.random()*this.map.width);
 				y = Math.floor(Math.random()*this.map.height);
 			} while(this.map.blocked(x, y));
+
 			// give commander
 			this.addEntity(EntityFactory.person(id, x, y));
 		}

@@ -32,6 +32,9 @@ define([], function() {
 		blocked: function(x, y, w, h) {
 			w = w || 1;
 			h = h || 1;
+			if(x < 0 || x+w > this.width || y < 0 || y+h > this.height) {
+				return true;
+			}
 			for(var i = 0; i < h; i++) {
 				for(var j = 0; j < w; j++) {
 					if(this.pathingGrid[y+i][x+j]) {

@@ -26,7 +26,10 @@ var Map = Class.extend({
 		return this.entityGrid[y][x];
 	},
 	blocked: function(x, y, w, h) {
-		if(x < 0 || y < 0 || x+w >= this.width || y+h >= this.height) {
+		w = w || 1;
+		h = h || 1;
+
+		if(x < 0 || y < 0 || x+w > this.width || y+h > this.height) {
 			return true;
 		}
 		for(var i = 0; i < h; i++) {
