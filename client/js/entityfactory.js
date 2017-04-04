@@ -1,4 +1,4 @@
-define(["actors/person", "actors/monster", "props/tree"], function(Person, Monster, Tree) {
+define(["actors/person", "actors/monster", "props/tree", "props/wall", "items/fruit"], function(Person, Monster, Tree, Wall, Fruit) {
 	var EntityFactory = {};
 
 	EntityFactory.person = EntityFactory[Types.Entities.PERSON] = function(e) {
@@ -10,6 +10,12 @@ define(["actors/person", "actors/monster", "props/tree"], function(Person, Monst
 	EntityFactory.tree = EntityFactory[Types.Entities.TREE] = function(e) {
 		return new Tree(e.id, e.x, e.y);
 	};
+	EntityFactory.wall = EntityFactory[Types.Entities.WALL] = function(e) {
+		return new Wall(e.id, e.owner, e.x, e.y);
+	};
+	EntityFactory.fruit = EntityFactory[Types.Entities.FRUIT] = function(e) {
+		return new Fruit(e.id, e.x, e.y);
+	};
 
 	return EntityFactory;
-});
+});=

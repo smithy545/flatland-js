@@ -8,6 +8,13 @@ var Types = {
 		DESPAWN: 5,
 		ENTITIES: 6,
 		MOVE: 7,
+		PICKUP: 15,
+		DROP: 16,
+		UPDATETILE: 19
+
+		// WIP
+		BUILD: 17,
+		TRAIN: 18,
 
 		// undefined
 		GATHER: 8,
@@ -17,19 +24,20 @@ var Types = {
 		EAT: 12,
 		DRINK: 13,
 		MINE: 14,
-		PICKUP: 15,
-		DROP: 16,
-		BUILD: 17,
-		TRAIN: 18,
-		UPDATETILE: 19
+		STATE: 20,
 	},
 
 	Entities: {
+		// actors
 		PERSON: 1,
 		MONSTER: 2,
-		TREE: 3,
-		WALL: 4,
-		FRUIT: 5,
+
+		// props
+		TREE: 10,
+		WALL: 11,
+
+		// items
+		FRUIT: 20,
 	},
 	Directions: {
 		UP: 1,

@@ -80,6 +80,14 @@ define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "
                 this.addEntity(entity);
             }
         },
+        updateEntityState: function(entityId, state) {
+            var entity = this.getEntity(entityId);
+            if(entity) {
+                entity.setState(state);
+            } else {
+                console.error("Could not find entity "+entityId+" for state update.");
+            }
+        },
 		setRenderer: function(renderer) {
 			this.renderer = renderer;
 		},

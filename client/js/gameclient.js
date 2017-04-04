@@ -29,6 +29,10 @@ define(["lib/socket.io", "entityfactory"], function(io, EntityFactory) {
 				conn.on(Types.Messages.UPDATETILE, function(type, x, y) {
 					game.map.updateTile(type, x, y);
 				});
+
+				conn.on(Types.Messages.STATE, function(id, state) {
+					game.updateEntityState(id, state);
+				});
 			});
 			conn.on(Types.Messages.ERROR, function(msg) { //handle error
 				console.error("Server Error: " + msg);

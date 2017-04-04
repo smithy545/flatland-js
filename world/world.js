@@ -94,6 +94,16 @@ var World = Class.extend({
 			&& !this.map.blocked(x, y, e.getWidth(), e.getHeight())
 			&& this.map.isNextTo(e, x, y);
 	},
+	broadcast: function() {
+		var args = Array.prototype.slice.call(arguments); // convert to array
+		var entity = args.shift();
+		var socket;
+
+		for(var i in entity.visibleTo) {
+			socket = this.players[entity.visibleTo[i]].socket;
+			socket.emit.apply(socket, args);
+		}
+	},
 	updateVisible: function(e) {
 		// for new entity
 		var visibleTo, couldSee;
