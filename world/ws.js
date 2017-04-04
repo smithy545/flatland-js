@@ -60,7 +60,7 @@ var ws = {
 				if(!(socket.player && world.canOrder(socket.player.id, id)
 				&& Types.getKind(world.getEntity(id).type) == 'actor'
 				&& world.gather(id, x, y))) {
-					socket.emit(Types.Messages.ERROR, "Cannot gather there.", Type.Messages.GATHER);
+					socket.emit(Types.Messages.ERROR, "Cannot gather there.", Type.Messages.GATHER, id);
 				}
 			});
 
@@ -69,33 +69,25 @@ var ws = {
 				&& Types.getKindAsString(world.getEntity(pickupId).type) == 'item'
 				&& Types.getKindAsString(world.getEntity(id).type) == 'actor'
 				&& world.pickup(id, pickupId))) {
-					socket.emit(Types.Messages.ERROR, "Cannot pick that up.", Types.Messages.PICKUP);
+					socket.emit(Types.Messages.ERROR, "Cannot pick that up.", Types.Messages.PICKUP, id);
 				}
 			});
 
 			socket.on(Types.Messages.DROP, function(id, dropId) {
 				if(!(socket.player && world.canOrder(socket.player.id, id)
-				&& Types.getKind(world.getEntity(id).type) == 'actor'
+				&& Types.getKindAsString(world.getEntity(id).type) == 'actor'
 				&& world.getEntity(id).item != null
 				&& world.drop(id, dropId))) {
-					socket.emit(Types.Messages.ERROR, "Cannot drop that.", Types.Messages.DROP);
+					socket.emit(Types.Messages.ERROR, "Cannot drop that.", Types.Messages.DROP, id);
 				}
-			});
-
-			socket.on(Types.Messages.MINE, function(id, x, y) {
-
-			});
-
-			socket.on(Types.Messages.ATTACK, function(id, x, y) {
-
 			});
 
 			socket.on(Types.Messages.BUILD, function(id, type, x, y) {
 				if(!(socket.player && world.canOrder(socket.player.id, id)
 				&& Types.getKind(world.getEntity(id).type) == 'actor'
-				&& Types.getKind(type) == 'prop'
+				&& Types.getKindAsString(type) == 'prop'
 				&& world.build(id, type, x, y))) {
-					socket.emit(Types.Messages.ERROR, "Cannot build that.", Types.Messages.BUILD);
+					socket.emit(Types.Messages.ERROR, "Cannot build that.", Types.Messages.BUILD, id);
 				}
 			});
 
@@ -108,6 +100,14 @@ var ws = {
 			});
 
 			socket.on(Types.Messages.DRINK, function(id, x, y) {
+
+			});
+
+			socket.on(Types.Messages.MINE, function(id, x, y) {
+
+			});
+
+			socket.on(Types.Messages.ATTACK, function(id, x, y) {
 
 			});
 

@@ -159,11 +159,13 @@ define(["state", "uihandler", "actor"], function(State, UIHandler, Actor) {
 						x: Math.floor((mouse.x+camera.getX())/TILESIZE),
 						y: Math.floor((mouse.y+camera.getY())/TILESIZE)
 					};
-					if(!this.game.map.blocked(target.x, target.y)) {
-						this.selected.setTarget(target);
-					} else {
-						console.error("Cannot path there. Tile is taken.");
-						this.selected.setTarget(Util.nextFreeTile(this.game.map.pathingGrid, target))
+					if(target.x != this.selected.gridX || target.y != this.selected.gridY) {
+						if(!this.game.map.blocked(target.x, target.y)) {
+							this.selected.setTarget(target);
+						} else {
+							console.error("Cannot path there. Tile is taken.");
+							this.selected.setTarget(Util.nextFreeTile(this.game.map.pathingGrid, target))
+						}
 					}
 				}
 

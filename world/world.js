@@ -208,7 +208,7 @@ var World = Class.extend({
 		this.map.registerEntity(e);
 		this.players[e.owner].createDirtyArea(e); // update owner sight block
 		this.updateVisibleAndMove(e); // update who can see entity/send move signal
-		
+
 		return true;
 	},
 	pickup: function(entityId, itemId) {
@@ -220,7 +220,6 @@ var World = Class.extend({
 	drop: function(entityId, itemId) {
 		var entity = this.getEntity(entityId),
 			item = this.getEntity(itemId);
-		if(this.map.entityGrid)
 		this.map.unregisterEntity(item);
 		entity.setItem(item);
 	},
