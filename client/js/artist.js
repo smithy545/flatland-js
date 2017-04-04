@@ -1,6 +1,6 @@
 define([], function() {
 	var Artist = {
-		Tree: function(ctx, e) {
+		tree: function(ctx, e) {
 			ctx.save();
 
 			ctx.strokeStyle = "#0f0";
@@ -8,7 +8,7 @@ define([], function() {
 
 			ctx.restore();
 		},
-		RectOutline: function(ctx, e) {
+		rectoutline: function(ctx, e) {
 			ctx.save();
 
 			ctx.strokeStyle = e.color;
@@ -16,7 +16,7 @@ define([], function() {
 
 			ctx.restore();
 		},
-		Rect: function(ctx, e) {
+		rect: function(ctx, e) {
 			ctx.save();
 
 			ctx.strokeStyle = e.outline;

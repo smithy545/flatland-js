@@ -8,7 +8,7 @@ define(["ui"], function(UI) {
 			this.setWidth(width);
 			this.setHeight(height);
 
-			this.type = "RectOutline";
+			this.type = "rectoutline";
 
 			this.color = color || "#000";
 		},

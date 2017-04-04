@@ -6,15 +6,21 @@ var EntityFactory = require('./entityfactory');
 var Map = require('./map');
 var Area = require('./area');
 var fs = require('fs');
+var path = require('path');
 
 var World = Class.extend({
-	init: function(mapFile) {
+	init: function(name) {
 		this.players = {};
 		this.entities = {};
 		this.entityId = 1;
-		this.map = new Map("../shared/" + mapFile);
+		this.name = name;
+		var mapFile = path.join(__dirname, "../shared/" + name + ".json");
+		if(!fs.existsSync(mapFile)) {
+			this.generateTerrain(mapFile, 1000, 1000);
+		}
+		this.map = new Map(mapFile);
 
-		this.addEntity(EntityFactory["Monster"](5, 5));
+		this.addEntity(EntityFactory.monster(5, 5));
 	},
 	welcomePlayer: function(name, id, socket) {
 		var x, y;
@@ -26,23 +32,34 @@ var World = Class.extend({
 			do {
 				x = Math.floor(Math.random()*this.map.width);
 				y = Math.floor(Math.random()*this.map.height);
-			} while(this.map.blocked(x, y, 2, 2));
+			} while(this.map.blocked(x, y));
 			// give commander
-			this.addEntity(EntityFactory["Person"](id, x, y));
-			// give peasants
-			this.addEntity(EntityFactory["Person"](id, x+1, y));
-			this.addEntity(EntityFactory["Person"](id, x, y+1));
-			this.addEntity(EntityFactory["Person"](id, x+1, y+1));
+			this.addEntity(EntityFactory.person(id, x, y));
 		}
 
 		return this.players[id];
 	},
-	generateTerrain: function(mapFile) {
-		var data = "";
+	generateTerrain: function(mapFile, width, height) {
+		var data;
 
+		var splitFile = mapFile.split(".");
+		var name = splitFile[splitFile.length - 2];
+
+		data = {
+			"name": name,
+			"width": width,
+			"height": height,
+			"tilesize": 32,
+			"tilesetWidth": 30,
+			"tilesetHeight": 30,
+			"tiles": []
+		};
 		// generate terrain here
+		for(var i = 0; i < height*width; i++) {
+			data["tiles"].push(767);
+		}
 
-		fs.writeSync(mapFile, data);
+		fs.writeFileSync(mapFile, JSON.stringify(data));
 	},
 	addEntity: function(e) {
 		e.id = this.entityId++;
@@ -72,7 +89,7 @@ var World = Class.extend({
 	canMove: function(id, x, y) {
 		var e = this.entities[id];
 
-		return Types.getKind(e.type) == "actor"
+		return Types.getKindAsString(e.type) == "actor"
 			&& !this.map.blocked(x, y, e.getWidth(), e.getHeight())
 			&& this.map.isNextTo(e, x, y);
 	},
@@ -90,16 +107,16 @@ var World = Class.extend({
 						e.setVisibleTo(id, visibleTo[i]);
 					}
 					if(!couldSee) { // if new entity
-						this.players[id].socket.emit(Types.MESSAGES.SPAWN, e.toSendable());
+						this.players[id].socket.emit(Types.Messages.SPAWN, e.toSendable());
 					}
 				} else if(couldSee) { // if removing entity
-					this.players[id].socket.emit(Types.MESSAGES.DESPAWN, e.id);
+					this.players[id].socket.emit(Types.Messages.DESPAWN, e.id);
 				}
 			}
 		}
 
 		// check if owner can see new entities
-		var vr = Types.VIEWDISTANCE[e.type];
+		var vr = Types.getViewDistance(e.type);
 		var viewBox = new Area(e.x-vr, e.y-vr, 2*vr+1, 2*vr+1);
 		var ent, viewable;
 		for(var id in this.entities) {
@@ -112,12 +129,12 @@ var World = Class.extend({
 					} else if(ent.visibleTo[e.owner][e.id] && !viewable) { // remove as being seen by e
 						ent.setInvisibleTo(e.owner, e.id);
 						if(Object.keys(ent.visibleTo[e.owner]).length == 0) { // despawn if last seeing entity
-							this.players[e.owner].socket.emit(Types.MESSAGES.DESPAWN, id);
+							this.players[e.owner].socket.emit(Types.Messages.DESPAWN, id);
 						}
 					}
 				} else if(viewable) { // if couldn't see but can now
 					ent.setVisibleTo(e.owner, e.id);
-					this.players[e.owner].socket.emit(Types.MESSAGES.SPAWN, ent.toSendable());
+					this.players[e.owner].socket.emit(Types.Messages.SPAWN, ent.toSendable());
 				}
 			}
 		}
@@ -136,20 +153,20 @@ var World = Class.extend({
 					}
 
 					if(couldSee) { // if visible move
-						this.players[id].socket.emit(Types.MESSAGES.MOVE, e.id, e.x, e.y);
+						this.players[id].socket.emit(Types.Messages.MOVE, e.id, e.x, e.y);
 					} else { // else spawn
-						this.players[id].socket.emit(Types.MESSAGES.SPAWN, e.toSendable());
+						this.players[id].socket.emit(Types.Messages.SPAWN, e.toSendable());
 					}
 				} else if(couldSee) { // remove from player view
 					e.visibleTo[id] = {};
-					this.players[id].socket.emit(Types.MESSAGES.DESPAWN, e.id);
+					this.players[id].socket.emit(Types.Messages.DESPAWN, e.id);
 				}
 			} else { // move if owned
-				this.players[id].socket.emit(Types.MESSAGES.MOVE, e.id, e.x, e.y);
+				this.players[id].socket.emit(Types.Messages.MOVE, e.id, e.x, e.y);
 			}
 		}
 		// check if moved into/out of sight of new entity
-		var vr = Types.VIEWDISTANCE[e.type];
+		var vr = Types.getViewDistance(e.type);
 		var viewBox = new Area(e.x-vr, e.y-vr, 2*vr+1, 2*vr+1);
 		var ent, viewable;
 		for(var id in this.entities) {
@@ -162,12 +179,12 @@ var World = Class.extend({
 					} else if(ent.visibleTo[e.owner][e.id] && !viewable) { // remove as being seen by e
 						ent.setInvisibleTo(e.owner, e.id);
 						if(Object.keys(ent.visibleTo[e.owner]).length == 0) { // despawn if last seeing entity
-							this.players[e.owner].socket.emit(Types.MESSAGES.DESPAWN, id);
+							this.players[e.owner].socket.emit(Types.Messages.DESPAWN, id);
 						}
 					}
 				} else if(viewable) { // if couldn't see but can now
 					ent.setVisibleTo(e.owner, e.id);
-					this.players[e.owner].socket.emit(Types.MESSAGES.SPAWN, ent.toSendable());
+					this.players[e.owner].socket.emit(Types.Messages.SPAWN, ent.toSendable());
 				}
 			}
 		}
@@ -192,6 +209,31 @@ var World = Class.extend({
 		if(this.map.entityGrid)
 		this.map.unregisterEntity(item);
 		entity.setItem(item);
+	},
+	gather: function(entityId, x, y) {
+		var entity = this.getEntity(entityId),
+			entities = this.map.entityAt(x, y),
+			gathered = false;
+
+		if(entity.getItem() == null) {
+			for(var id in entities) {
+				if(id != entityId && Types.isItem(entities[id].type)) {
+					gathered = true;
+
+					
+
+					break;
+				}
+			}
+		}
+
+		return gathered;
+	},
+	build: function(id, building, x, y) {
+
+	},
+	train: function(id, unit, x, y) {
+
 	}
 });
 

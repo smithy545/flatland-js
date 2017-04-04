@@ -1,5 +1,6 @@
 var Class = require('../shared/class');
 var Util = require('../shared/util');
+var Types = require('../shared/constants');
 var Area = require('./area');
 
 var Player = Class.extend({
@@ -20,7 +21,7 @@ var Player = Class.extend({
 		var minx=null, miny=null, maxx=null, maxy=null;
 
 		this.entities.forEach((e) => {
-			var vr = Types.VIEWDISTANCE[e.type];
+			var vr = Types.getViewDistance(e.type);
 			var a = new Area(e.x-vr, e.y-vr, 2*vr+1, 2*vr+1);
 			if(minx) {
 				minx = Math.min(minx, a.x);
@@ -41,8 +42,8 @@ var Player = Class.extend({
 		if(this.dirtiestArea.collides(e)) { // if possibly visible
 			for(var i in this.entities) { // check entity views
 				var ent = this.entities[i];
-				var vr = Types.VIEWDISTANCE[ent.type]
-				var view = new Area(ent.getX()-vr, ent.getY()-vr, 2*vr+1, 2*vr+1)
+				var vr = Types.getViewDistance(ent.type);
+				var view = new Area(ent.getX()-vr, ent.getY()-vr, 2*vr+1, 2*vr+1);
 				if(view.collides(e)) {
 					return true;
 				}
@@ -57,8 +58,8 @@ var Player = Class.extend({
 		if(this.dirtiestArea.collides(e)) { // if possibly visible
 			for(var i in this.entities) { // check entity views
 				var ent = this.entities[i];
-				var vr = Types.VIEWDISTANCE[ent.type]
-				var view = new Area(ent.getX()-vr, ent.getY()-vr, 2*vr+1, 2*vr+1)
+				var vr = Types.getViewDistance(ent.type);
+				var view = new Area(ent.getX()-vr, ent.getY()-vr, 2*vr+1, 2*vr+1);
 				if(view.collides(e)) {
 					visibleTo.push(ent.id);
 				}

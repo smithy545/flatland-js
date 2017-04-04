@@ -3,6 +3,8 @@ define(["entity"], function(Entity) {
 		init: function(onTrigger, onUntrigger, update) {
 			this._super();
 
+			this.type = "UI";
+
 			this.trigger_callback = onTrigger;
 			this.untrigger_callback = onUntrigger;
 			this.update = update;

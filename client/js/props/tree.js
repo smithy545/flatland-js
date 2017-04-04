@@ -5,8 +5,9 @@ define(["prop"], function(Prop) {
 
 			this.width = 1;
 			this.height = 1;
-			this.type = "Tree";
-			this.viewRadius = Types.VIEWDISTANCE[this.type];
+			
+			this.type = "tree";
+			this.viewRadius = Types.getViewDistance(this.type);
 		}
 	});
 

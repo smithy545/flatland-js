@@ -8,9 +8,11 @@ define(["actor"], function(Actor) {
 
 			this.setWidth(1);
 			this.setHeight(1);
-			this.viewRadius = Types.VIEWDISTANCE["Monster"];
 
-			this.type = "sprite";
+			this.type = "monster";
+			this.viewRadius = Types.getViewDistance(this.type);
+
+			this.useSprite = true;
 			this.spriteName = "monster";
 		},
 		update: function(pathfinder) {

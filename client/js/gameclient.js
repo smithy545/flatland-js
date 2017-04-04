@@ -8,29 +8,29 @@ define(["lib/socket.io", "entityfactory"], function(io, EntityFactory) {
 				$("#disconnectMessage").show();
 			});
 
-			conn.emit(Types.MESSAGES.HELLO, this.game.storage.id); // init handshake
-			conn.on(Types.MESSAGES.WELCOME, function(player, mapFile) { // complete handshake
+			conn.emit(Types.Messages.HELLO, this.game.storage.id); // init handshake
+			conn.on(Types.Messages.WELCOME, function(player, mapFile) { // complete handshake
 				game.start(player, mapFile);
 
-				conn.on(Types.MESSAGES.SPAWN, function(e) { // spawn entity in vision
+				conn.on(Types.Messages.SPAWN, function(e) { // spawn entity in vision
 					game.receiveEntity(e);
 				});
-				conn.on(Types.MESSAGES.DESPAWN, function(id) { // remove entity from vision
+				conn.on(Types.Messages.DESPAWN, function(id) { // remove entity from vision
 					if(game.hasEntity(id)) {
 						game.removeEntity(id);
 					}
 				});
-				conn.on(Types.MESSAGES.MOVE, function(id, x, y) {
+				conn.on(Types.Messages.MOVE, function(id, x, y) {
 					game.map.unregisterEntity(game.entities[id]);
 					game.entities[id].setGridPosition(x, y);
 					game.map.registerEntity(game.entities[id]);
 				});
 			});
-			conn.on(Types.MESSAGES.ERROR, function(msg) { //handle error
+			conn.on(Types.Messages.ERROR, function(msg) { //handle error
 				console.error("Server Error: " + msg);
 				var id, code = arguments[1];
 				switch(code) {
-					case Types.MESSAGES.MOVE:
+					case Types.Messages.MOVE:
 						id = arguments[2];
 						game.getEntity(id).path = []; // start pathing over
 						break;

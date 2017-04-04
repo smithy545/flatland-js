@@ -1,5 +1,5 @@
-Types = {
-	MESSAGES: {
+var Types = {
+	Messages: {
 		// defined
 		HELLO: 1,
 		WELCOME: 2,
@@ -18,44 +18,48 @@ Types = {
 		DRINK: 13,
 		MINE: 14,
 		PICKUP: 15,
-		BUILD: 16,
-		DROP: 17
+		DROP: 16,
+		BUILD: 17,
+		TRAIN: 18
 	},
-	VIEWDISTANCE: {
-		Person: 10,
-		Tree: 0,
-		SpawnArea: 3,
-		Monster: 4
+
+	Entities: {
+		PERSON: 1,
+		MONSTER: 2,
+		TREE: 3,
+		WALL: 4,
+		FRUIT: 5,
 	},
-	ACTORS: {
-		Person: 1,
-		Monster: 2,
-	},
-	PROPS: {
-		Tree: 1,
-		SpawnArea: 2,
-	},
-	DIRECTIONS: {
+	Directions: {
 		UP: 1,
 		DOWN: 2,
 		LEFT: 3,
 		RIGHT: 4,
-
-		// possibly for later implementation
 		UPLEFT: 5,
 		UPRIGHT: 6,
 		DOWNLEFT: 7,
-		DOWNRIGHT: 8
+		DOWNRIGHT: 8,
 	},
 
-	getKind: function(type) {
-		if(Types.ACTORS[type]) {
-			return "actor";
-		} else if(Types.PROPS[type]) {
-			return "prop";
-		}
-		return "none";
-	}
+	getKind: function(name) {
+		return Kinds[name][0];
+	},
+
+	getKindAsString: function(name) {
+		return Kinds[name][1];
+	},
+
+	getViewDistance: function(name) {
+		return Kinds[name][2];
+	},
+};
+
+Kinds = {
+	person: [Types.Entities.PERSON, "actor", 10],
+    monster: [Types.Entities.MONSTER, "actor", 3],
+    tree: [Types.Entities.TREE, "prop", 0],
+    wall: [Types.Entities.WALL, "prop", 1],
+    fruit: [Types.Entities.FRUIT, "item", 0],
 };
 
 TILESIZE = 32;

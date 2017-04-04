@@ -21,19 +21,19 @@ String.prototype.hashCode = function() {
 var ws = {
 	init: function(server) {
 		var io = require('socket.io')(server);
-		var mapFile = "world1.json";
 
 		console.log("Creating world..");
-		world = new World(mapFile);
+		world = new World("world1");
 		console.log("World created.");
 
 		io.on('connection', function(socket) {
 			console.log("Connection from " + socket.client.conn.remoteAddress);
 
-			socket.on(Types.MESSAGES.HELLO, function(id) {
+			socket.on(Types.Messages.HELLO, function(id) {
+				// TODO: sanitize to prevent sql injection
 				db.get("SELECT name FROM user WHERE id="+id, function(err, row) {
 					if(err) {
-						return socket.emit(Types.MESSAGES.ERROR, "Could not find user.");
+						return socket.emit(Types.Messages.ERROR, "Could not find user.");
 					}
 					socket.player = world.welcomePlayer(row.name, parseInt(id), socket);
 					socket.player.socket = socket;
@@ -44,59 +44,73 @@ var ws = {
 							sendable.entities.push(world.entities[i]);
 						}
 					}
-					socket.emit(Types.MESSAGES.WELCOME, sendable, mapFile);
+					socket.emit(Types.Messages.WELCOME, sendable, world.name + ".json");
 				});
 			});
 
-			socket.on(Types.MESSAGES.MOVE, function(id, x, y) {
+			socket.on(Types.Messages.MOVE, function(id, x, y) {
 				if(socket.player && world.canOrder(socket.player.id, id) && world.canMove(id, x, y)) {
 					world.move(id, x, y);
 				} else {
-					socket.emit(Types.MESSAGES.ERROR, "Cannot move entity there.", Types.MESSAGES.MOVE, id);
+					socket.emit(Types.Messages.ERROR, "Cannot move entity there.", Types.Messages.MOVE, id);
 				}
 			});
 
-			socket.on(Types.MESSAGES.GATHER, function(id, x, y) {
-
+			socket.on(Types.Messages.GATHER, function(id, x, y) {
+				if(!(socket.player && world.canOrder(socket.player.id, id)
+				&& Types.getKind(world.getEntity(id).type) == 'actor'
+				&& world.gather(id, x, y))) {
+					socket.emit(Types.Messages.ERROR, "Cannot gather there.", Type.Messages.GATHER);
+				}
 			});
 
-			socket.on(Types.MESSAGES.PICKUP, function(id, pickupId) {
+			socket.on(Types.Messages.PICKUP, function(id, pickupId) {
 				if(socket.player && world.canOrder(socket.player.id, id) && world.sameTile(id, pickupId)
-				&& Types.getKind(world.getEntity(pickupId).type) == 'item'
+				&& Types.isItem(world.getEntity(pickupId).type)
 				&& Types.getKind(world.getEntity(id).type) == 'actor') {
 					world.pickup(id, pickupId);
 				} else {
-					socket.emit(Types.MESSAGES.ERROR, "Cannot pickup that.", Types.MESSAGES.PICKUP);
+					socket.emit(Types.Messages.ERROR, "Cannot pick that up.", Types.Messages.PICKUP);
 				}
 			});
 
-			socket.on(Types.MESSAGES.DROP, function(id, dropId) {
+			socket.on(Types.Messages.DROP, function(id, dropId) {
 				if(socket.player && world.canOrder(socket.player.id, id)
 				&& Types.getKind(world.getEntity(id).type) == 'actor'
 				&& world.getEntity(id).item != null) {
 					world.drop(id, dropId);
 				} else {
-					socket.emit(Types.MESSAGES.ERROR, "Cannot pickup that.", Types.MESSAGES.PICKUP);
+					socket.emit(Types.Messages.ERROR, "Cannot drop that.", Types.Messages.DROP);
 				}
 			});
 
-			socket.on(Types.MESSAGES.MINE, function(id, x, y) {
+			socket.on(Types.Messages.MINE, function(id, x, y) {
 
 			});
 
-			socket.on(Types.MESSAGES.ATTACK, function(id, x, y) {
+			socket.on(Types.Messages.ATTACK, function(id, x, y) {
 
 			});
 
-			socket.on(Types.MESSAGES.BUILD, function(id, building, x, y) {
+			socket.on(Types.Messages.BUILD, function(id, type, x, y) {
+				if(socket.player && world.canOrder(socket.player.id, id)
+				&& Types.getKind(world.getEntity(id).type) == 'prop'
+				&& Types.getKind(type) == 'actor') {
+					world.build(id, buildId, x, y);
+				} else {
+					socket.emit(Types.Messages.ERROR, "Cannot build that.", Types.Messages.BUILD);
+				}
+			});
+
+			socket.on(Types.Messages.TRAIN, function(id, type, x, y) {
 
 			});
 
-			socket.on(Types.MESSAGES.EAT, function(id, x, y) {
+			socket.on(Types.Messages.EAT, function(id, x, y) {
 
 			});
 
-			socket.on(Types.MESSAGES.DRINK, function(id, x, y) {
+			socket.on(Types.Messages.DRINK, function(id, x, y) {
 
 			});
 

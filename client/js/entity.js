@@ -14,6 +14,7 @@ define([], function() {
 			this.passable = false;
 
 			// for sprite entities
+			this.useSprite = false;
 			this.isLoaded = false;
 			this.animations = null;
 			this.currentAnimation = null;
@@ -22,7 +23,7 @@ define([], function() {
 		},
 		setState: function(state) {
 			this.state = state;
-			if(this.type === 'sprite') {
+			if(this.useSprite) {
 				this.flipSpriteX = false;
 				if(state.endsWith("left")) {
 					this.flipSpriteX = true;
@@ -141,7 +142,7 @@ define([], function() {
 
 		// sprite functions
 		setSprite: function(sprite, ready_callback) {
-			if(this.type != 'sprite') {
+			if(!this.useSprite) {
 				console.error("This is not a sprite entity");
 				throw "Error";
 			} else if(!sprite) {

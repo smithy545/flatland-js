@@ -6,10 +6,11 @@ define(["actor"], function(Actor) {
 			this.setWidth(1);
 			this.setHeight(1);
 
-			this.type = "sprite";
-			this.spriteName = "person";
+			this.type = "person";
+			this.viewRadius = Types.getViewDistance(this.type);
 
-			this.viewRadius = Types.VIEWDISTANCE["Person"];
+			this.useSprite = true;
+			this.spriteName = "person";
 
 			this.character = character;
 			this.queue = [];
@@ -30,7 +31,7 @@ define(["actor"], function(Actor) {
 					} else {
 						this.setState('walk_up');
 					}
-					return [Types.MESSAGES.MOVE, this.id, move[0], move[1]];
+					return [Types.Messages.MOVE, this.id, move[0], move[1]];
 				} else {
 					this.setState('idle_down');
 					this.target = this.queue.pop();

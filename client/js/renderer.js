@@ -91,7 +91,7 @@ define(["camera", "artist", "sprites", "sprite"], function(Camera, Artist, sprit
 			}
 		},
 		panDown: function() {
-			if(this.camera.getY() < this.game.map.height*TILESIZE) {
+			if(this.camera.getY() < this.game.map.height*TILESIZE-this.getHeight()) {
 				this.camera.setY(this.camera.getY()+4);
 			}
 		},
@@ -141,16 +141,19 @@ define(["camera", "artist", "sprites", "sprite"], function(Camera, Artist, sprit
 	            // draw entities
 	            this.game.forEachEntity((e) => {
 	            	if(e.isVisible() && this.camera.canSee(e)) {
-	            		if(Artist[e.type]) {
+	            		if(e.useSprite) {
+	            			Artist['sprite'](ctx, e);
+	            		} else if(Artist[e.type]) {
 	            			Artist[e.type](ctx, e);
-	            			if(e.isSelected()) {
-	            				ctx.strokeStyle = "#ff0";
-			            		ctx.strokeRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
-	            			}
 	            		} else {
 		            		// no drawing function, just use square
-		            		ctx.strokeRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+		            		ctx.fillStyle = "#000";
+		            		ctx.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
 		            	}
+            			if(e.isSelected()) {
+            				ctx.strokeStyle = "#ff0";
+		            		ctx.strokeRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+            			}
 	            	}
 	            });
 
@@ -162,7 +165,9 @@ define(["camera", "artist", "sprites", "sprite"], function(Camera, Artist, sprit
 		    this.game.forEachUIElement((e) => {
             	if(e.isVisible()) {
             		this.screenContext.clearRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
-            		if(Artist[e.type]) {
+            		if(e.useSprite) {
+            			Artist['sprite'](ctx, e);
+            		} else if(Artist[e.type]) {
             			Artist[e.type](ctx, e);
             		} else {
 	            		// no drawing function, just use square

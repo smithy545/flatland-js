@@ -17,7 +17,7 @@ define(["state", "uihandler", "actor"], function(State, UIHandler, Actor) {
 				mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
 				TILESIZE, TILESIZE, "#ccc");
 
-			this.UIElements["main_panel"] = UIHandler.createRect(0, height-ui_height, width, ui_height, "#ccc", "#000");
+			//this.UIElements["main_panel"] = UIHandler.createRect(0, height-ui_height, width, ui_height, "#ccc", "#000");
 			this.UIElements["build_bar"] = UIHandler.createRect(0, height-ui_height, TILESIZE*8, ui_height, "#888", "#000");
 			var buttonHeight = TILESIZE, buttonWidth = 4*TILESIZE, buttonFontSize = 24;
 			this.UIElements["structure_button"] = UIHandler.createRectOutline(0, height-ui_height, buttonWidth, buttonHeight, "#000", null,

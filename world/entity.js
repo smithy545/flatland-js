@@ -15,7 +15,7 @@ var Entity = Class.extend({
 		this.item = null;
 		this.passable = passable || false;
 
-		if(this.type == "Person") {
+		if(this.type == 'person') {
 			/* This is an assortment of the persons character traits.
 			 * These traits determine how successful they are at various
 			 * in-game tasks. These tasks are yet to be determined.

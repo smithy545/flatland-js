@@ -8,7 +8,7 @@ define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "
 			this.renderer = new Renderer(this, canvas, screen);	// renderer object
 			this.state = null;		// current game state
             this.storage = new Storage(this);   // cookie storage system
-            this.id = this.storage.id;
+            this.id = this.storage.id;  // server generated id
             this.client = new GameClient(this); // connection to server
             this.map = null         // map object
             this.pathfinder = null  // pathfinder object
@@ -48,7 +48,6 @@ define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "
                             player.entities.forEach((e) => {
                                 this.receiveEntity(e);
                             });
-                            console.log(player.entities);
                             this.renderer.camera.focusGridObject(player.entities[0]);
 
                 			this.started = true;
@@ -71,7 +70,7 @@ define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "
         },
         receiveEntity: function(e) {
             var entity = EntityFactory[e.type](e);
-            if(entity.type === 'sprite') {
+            if(entity.useSprite) {
                 entity.setSprite(this.renderer.spriteset[entity.spriteName], (entity) => {
                     entity.setState(e.state);
                     this.addEntity(entity);
