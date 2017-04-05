@@ -243,7 +243,34 @@ var World = Class.extend({
 		return gathered;
 	},
 	build: function(id, type, x, y) {
-		
+		var entity = this.getEntity(id),
+			item = entity.getItem(),
+			prop, ents;
+
+		if(map.blocked(x, y, prop.getWidth(), prop.getHeight())) {
+			ents = map.entityAt(x, y);
+			for(var i in ents) {
+				if(ents[i].type == type && !ents[i].built) {
+					prop = ents[i];
+					break;
+				}
+			}
+			if(typeof prop === 'undefined') {
+				return false;
+			}
+		} else if(EntityFactory[type]) {
+			prop = EntityFactory[type](entity.owner, type, x, y);
+		} else {
+			return false;
+		}
+
+		if(item && item.type in prop.cost) {
+			prop.build(item, item.quantity);
+		}
+
+		this.players[entity.owner].socket.emit(Types.Messages.BUILD, prop.toSendable());
+
+		return true;
 	},
 	train: function(id, type, x, y) {
 

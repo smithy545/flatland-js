@@ -33,6 +33,10 @@ define(["lib/socket.io", "entityfactory"], function(io, EntityFactory) {
 				conn.on(Types.Messages.STATE, function(id, state) {
 					game.updateEntityState(id, state);
 				});
+
+				conn.on(Types.Messages.BUILD, function(prop) {
+					// TODO: handle building
+				});
 			});
 			conn.on(Types.Messages.ERROR, function(msg) { //handle error
 				console.error("Server Error: " + msg);

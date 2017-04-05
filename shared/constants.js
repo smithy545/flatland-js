@@ -15,6 +15,7 @@ var Types = {
 		// WIP
 		BUILD: 17,
 		TRAIN: 18,
+		BLUEPRINT: 21,
 
 		// undefined
 		GATHER: 8,
@@ -38,6 +39,7 @@ var Types = {
 
 		// items
 		FRUIT: 20,
+		WOOD: 21,
 	},
 	Directions: {
 		UP: 1,
@@ -61,16 +63,23 @@ var Types = {
 	getViewDistance: function(name) {
 		return Kinds[name][2];
 	},
+
+	getCost: function(name) {
+		return Kinds[name][3];
+	}
 };
 
 Kinds = {
 	person: [Types.Entities.PERSON, "actor", 10],
     monster: [Types.Entities.MONSTER, "actor", 3],
 
-    tree: [Types.Entities.TREE, "prop", 0],
-    wall: [Types.Entities.WALL, "prop", 1],
+    tree: [Types.Entities.TREE, "prop", 0, null],
+    wall: [Types.Entities.WALL, "prop", 1, {
+    	wood: 10,
+    }],
     
-    fruit: [Types.Entities.FRUIT, "item", 0],
+    fruit: [Types.Entities.FRUIT, "item"],
+    wood: [Types.Entities.WOOD, "item"],
 };
 
 TILESIZE = 32;

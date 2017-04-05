@@ -1,4 +1,5 @@
 var Class = require('../shared/class');
+var Types = require('../shared/constants');
 
 var Entity = Class.extend({
 	init: function(owner, type, x, y, width, height, passable) {
@@ -14,18 +15,6 @@ var Entity = Class.extend({
 		this.state = "idle_down";
 		this.item = null;
 		this.passable = passable || false;
-
-		if(this.type == 'person') {
-			/* This is an assortment of the persons character traits.
-			 * These traits determine how successful they are at various
-			 * in-game tasks. These tasks are yet to be determined.
-			 */
-			this.character = {
-				intelligence: 0,
-				strength: 0,
-				luck: 0,
-			};
-		}
 	},
 	setVisibleTo: function(ownerId, entityId) {
 		if(!this.visibleTo[ownerId]) {
@@ -82,9 +71,6 @@ var Entity = Class.extend({
 			id: this.id,
 			state: this.state
 		};
-		if(this.type == "person") {
-			obj['character'] = this.character;
-		}
 
 		return obj;
 	}
