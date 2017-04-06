@@ -9,8 +9,14 @@ define(["entity"], function(Entity) {
 			this.untrigger_callback = onUntrigger;
 			this.update = update;
 		},
-		setUpdate: function(callback) {
+		onUpdate: function(callback) {
 			this.update = callback;
+		},
+		onTrigger: function(callback) {
+			this.trigger_callback = callback;
+		},
+		onUntrigger: function(callback) {
+			this.untrigger_callback = callback;
 		},
 		trigger: function() {
 			if(this.trigger_callback) {

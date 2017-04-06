@@ -15,7 +15,6 @@ var Types = {
 		// WIP
 		BUILD: 17,
 		TRAIN: 18,
-		BLUEPRINT: 21,
 
 		// undefined
 		GATHER: 8,

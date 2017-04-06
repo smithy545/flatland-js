@@ -26,6 +26,9 @@ define(["ui"], function(UI) {
 		},
 		setFontSize: function(fontSize) {
 			this.fontSize = fontSize;
+		},
+		getFont: function() {
+			return this.fontSize + "px " + this.font
 		}
 	});
 

@@ -1,8 +1,8 @@
 define(["entity"], function(Entity) {
 	var Item = Entity.extend({
-		init: function(id, owner, x, y) {
+		init: function(id, x, y) {
 			this._super(); // call entity constructor
-			this.owner = owner;
+			this.owner = -1;
 			this.setGridPosition(x, y);
 			this.id = id;
 		}

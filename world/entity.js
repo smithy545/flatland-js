@@ -43,6 +43,9 @@ var Entity = Class.extend({
 	setItem: function(item) {
 		this.item = item;
 	},
+	setId: function(id) {
+		this.id = id;
+	},
 	setX: function(x) {
 		this.x = x;
 	},

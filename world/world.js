@@ -63,7 +63,7 @@ var World = Class.extend({
 		fs.writeFileSync(mapFile, JSON.stringify(data));
 	},
 	addEntity: function(e) {
-		e.id = this.entityId++;
+		e.setId(this.entityId++);
 		e.setVisibleTo(e.owner, e.id);
 		this.entities[e.id] = e;
 		if(e.owner > 0) {
@@ -245,26 +245,31 @@ var World = Class.extend({
 	build: function(id, type, x, y) {
 		var entity = this.getEntity(id),
 			item = entity.getItem(),
-			prop, ents;
+			prop, ents, X, Y;
 
+		// check if blocked by something else or already being built
 		if(map.blocked(x, y, prop.getWidth(), prop.getHeight())) {
-			ents = map.entityAt(x, y);
-			for(var i in ents) {
-				if(ents[i].type == type && !ents[i].built) {
-					prop = ents[i];
-					break;
+			for(var X = x; X < prop.getWidth(); X++) {
+				for(var Y = y; Y < prop.getHeight(); Y++) {
+					ents = map.entityAt(X, Y);
+					for(var i in ents) {
+						if(ents[i].type == type && !ents[i].built) {
+							prop = ents[i];
+							break;
+						}
+					}
 				}
 			}
 			if(typeof prop === 'undefined') {
 				return false;
 			}
-		} else if(EntityFactory[type]) {
+		} else if(EntityFactory[type]) { // if nothing there new building
 			prop = EntityFactory[type](entity.owner, type, x, y);
-		} else {
+		} else { // if blocked don't build
 			return false;
 		}
 
-		if(item && item.type in prop.cost) {
+		if(item && item.type in prop.remainingCost) {
 			prop.build(item, item.quantity);
 		}
 

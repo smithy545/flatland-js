@@ -27,12 +27,27 @@ define([], function() {
 
 			ctx.restore();
 		},
-		text: function(ctx, element) {
+		textrect: function(ctx, e) {
 			ctx.save();
 
-			ctx.font = element.fontSize + "px " + element.font;
-			ctx.fillStyle = element.color;
-			ctx.fillText(element.text, element.getX(), element.getY());
+			ctx.strokeStyle = e.outline;
+			ctx.strokeRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+
+			ctx.fillStyle = e.color;
+			ctx.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+
+			ctx.font = e.getFont();
+			ctx.fillStyle = e.textColor;
+			ctx.fillText(e.text, e.getTextX(), e.getTextY());
+
+			ctx.restore();
+		},
+		text: function(ctx, e) {
+			ctx.save();
+
+			ctx.font = e.getFont();
+			ctx.fillStyle = e.color;
+			ctx.fillText(e.text, e.getX(), e.getY());
 
 			ctx.restore();
 		},

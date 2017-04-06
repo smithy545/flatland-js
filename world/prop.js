@@ -5,20 +5,20 @@ var Prop = Entity.extend({
 	init: function(owner, type, x, y, width, height, passable) {
 		this._super(owner, type, x, y, width, height, passable);
 
-		this.cost = Types.getCost(this.type);
+		this.remainingCost = Types.getCost(this.type);
 		this.built = false;
 	},
 	build: function(resource, quantity) {
-		if(quantity >= this.cost[resource]) {
-			this.cost[resource] = 0;
+		if(quantity >= this.remainingCost[resource]) {
+			this.remainingCost[resource] = 0;
 		} else {
-			this.cost[resource] -= quantity;
+			this.remainingCost[resource] -= quantity;
 		}
 		return this.ready();
 	},
 	ready: function() {
-		for(var i  in this.cost) {
-			if(this.cost[i] != 0) {
+		for(var i  in this.remainingCost) {
+			if(this.remainingCost[i] != 0) {
 				return false;
 			}
 		}
@@ -28,7 +28,7 @@ var Prop = Entity.extend({
 	toSendable: function() {
 		var obj = this._super();
 
-		obj['cost'] = this.cost;
+		obj['remainingCost'] = this.remainingCost;
 
 		return obj;
 	}

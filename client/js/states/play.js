@@ -20,77 +20,25 @@ define(["state", "uihandler", "actor"], function(State, UIHandler, Actor) {
 			//this.UIElements["main_panel"] = UIHandler.createRect(0, height-ui_height, width, ui_height, "#ccc", "#000");
 			this.UIElements["build_bar"] = UIHandler.createRect(0, height-ui_height, TILESIZE*8, ui_height, "#888", "#000");
 			var buttonHeight = TILESIZE, buttonWidth = 4*TILESIZE, buttonFontSize = 24;
-			this.UIElements["structure_button"] = UIHandler.createRectOutline(0, height-ui_height, buttonWidth, buttonHeight, "#000", null,
-				function() { // on mouse release
-					if(ui_elements["structure_button_active"]) {
-						delete ui_elements["structure_button_active"];
-						delete ui_elements["structure_text_active"];
+			var buttonNames = ["Structures", "1", "2", "3", "4", "5"], name;
+			var buttonCallbacks = {};
+			for(var i = 0; i < 6; i++) {
+				name = buttonNames[i];
+				var press_callback = function() {
+					if(ui_elements[this.text+"_button_active"]) {
+						delete ui_elements[this.text+"_button_active"];
 					} else {
-						ui_elements["structure_button_active"] = UIHandler.createRect(0, height-ui_height, buttonWidth, buttonHeight, "#000", "#fff");
-						ui_elements["structure_text_active"] = UIHandler.createText(5, buttonFontSize+height-ui_height, "Structure", buttonFontSize, null, "#fff");
-					}
-				});
-			this.UIElements["structure_text"] = UIHandler.createText(5, buttonFontSize+height-ui_height, "Structure", buttonFontSize);
+						ui_elements[this.text+"_button_active"] = UIHandler.createTextRect(this.getX(), this.getY(), buttonWidth, buttonHeight, this.text, buttonFontSize, null, "#000", "#fff", "#fff");
 
-			this.UIElements["other1_button"] = UIHandler.createRectOutline(0, buttonHeight+height-ui_height, buttonWidth, buttonHeight, "#000", null,
-				function() { // on mouse release
-					if(ui_elements["other1_button_active"]) {
-						delete ui_elements["other1_button_active"];
-						delete ui_elements["other1_text_active"];
-					} else {
-						ui_elements["other1_button_active"] = UIHandler.createRect(0, buttonHeight+height-ui_height, buttonWidth, buttonHeight, "#000", "#fff");
-						ui_elements["other1_text_active"] = UIHandler.createText(5, buttonFontSize+buttonHeight+height-ui_height, "other1", buttonFontSize, null, "#fff");
+						if(buttonCallbacks[this.text]) {
+							buttonCallbacks[this.text]();
+						}
 					}
-				});
-			this.UIElements["other1_text"] = UIHandler.createText(5, buttonFontSize+buttonHeight+height-ui_height, "other1", buttonFontSize);
-
-			this.UIElements["other2_button"] = UIHandler.createRectOutline(0, 2*buttonHeight+height-ui_height, buttonWidth, buttonHeight, "#000",
-				function() { // on mouse release
-					if(ui_elements["other2_button_active"]) {
-						delete ui_elements["other2_button_active"];
-						delete ui_elements["other2_text_active"];
-					} else {
-						ui_elements["other2_button_active"] = UIHandler.createRect(0, 2*buttonHeight+height-ui_height, buttonWidth, buttonHeight, "#000", "#fff");
-						ui_elements["other2_text_active"] = UIHandler.createText(5, buttonFontSize+2*buttonHeight+height-ui_height, "other2", buttonFontSize, null, "#fff");
-					}
-				});
-			this.UIElements["other2_text"] = UIHandler.createText(5, buttonFontSize+2*buttonHeight+height-ui_height, "other2", buttonFontSize);
-
-			this.UIElements["other3_button"] = UIHandler.createRectOutline(buttonWidth, height-ui_height, buttonWidth, buttonHeight, "#000", null,
-				function() { // on mouse release
-					if(ui_elements["other3_button_active"]) {
-						delete ui_elements["other3_button_active"];
-						delete ui_elements["other3_text_active"];
-					} else {
-						ui_elements["other3_button_active"] = UIHandler.createRect(buttonWidth, height-ui_height, buttonWidth, buttonHeight, "#000", "#fff");
-						ui_elements["other3_text_active"] = UIHandler.createText(5+buttonWidth, buttonFontSize+height-ui_height, "other3", buttonFontSize, null, "#fff");
-					}
-				});
-			this.UIElements["other3_text"] = UIHandler.createText(5+buttonWidth, buttonFontSize+height-ui_height, "other3", buttonFontSize);
-
-			this.UIElements["other4_button"] = UIHandler.createRectOutline(buttonWidth, buttonHeight+height-ui_height, buttonWidth, buttonHeight, "#000", null, 
-				function() {
-					if(ui_elements["other4_button_active"]) {
-						delete ui_elements["other4_button_active"];
-						delete ui_elements["other4_text_active"];
-					} else {
-						ui_elements["other4_button_active"] = UIHandler.createRect(buttonWidth, buttonHeight+height-ui_height, buttonWidth, buttonHeight, "#000", "#fff");
-						ui_elements["other4_text_active"] = UIHandler.createText(5+buttonWidth, buttonFontSize+buttonHeight+height-ui_height, "other4", buttonFontSize, null, "#fff");
-					}
-				});
-			this.UIElements["other4_text"] = UIHandler.createText(5+buttonWidth, buttonFontSize+buttonHeight+height-ui_height, "other4", buttonFontSize);
-
-			this.UIElements["other5_button"] = UIHandler.createRectOutline(buttonWidth, 2*buttonHeight+height-ui_height, buttonWidth, buttonHeight, "#000", null,
-				function() {
-					if(ui_elements["other5_button_active"]) {
-						delete ui_elements["other5_button_active"];
-						delete ui_elements["other5_text_active"];
-					} else {
-						ui_elements["other5_button_active"] = UIHandler.createRect(buttonWidth, 2*buttonHeight+height-ui_height, buttonWidth, buttonHeight, "#000", "#fff");
-						ui_elements["other5_text_active"] = UIHandler.createText(5+buttonWidth, buttonFontSize+2*buttonHeight+height-ui_height, "other5", buttonFontSize, null, "#fff");		
-					}
-				});
-			this.UIElements["other5_text"] = UIHandler.createText(5+buttonWidth, buttonFontSize+2*buttonHeight+height-ui_height, "other5", buttonFontSize);
+				};
+				ui_elements[name+"_button"] = UIHandler.createTextRect(buttonWidth*Math.floor(i/3), (i%3)*buttonHeight+height-ui_height, buttonWidth, buttonHeight,
+					name, buttonFontSize, null, "#888", "#000", "#000");
+				ui_elements[name+"_button"].onTrigger(press_callback.bind(ui_elements[name+"_button"]));
+			}
 
 			this.UIElements["entity_view"] = UIHandler.createRect(width-ui_height,
 				height-ui_height,

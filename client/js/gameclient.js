@@ -35,7 +35,7 @@ define(["lib/socket.io", "entityfactory"], function(io, EntityFactory) {
 				});
 
 				conn.on(Types.Messages.BUILD, function(prop) {
-					// TODO: handle building
+					console.log(prop);
 				});
 			});
 			conn.on(Types.Messages.ERROR, function(msg) { //handle error
