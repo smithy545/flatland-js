@@ -17,21 +17,40 @@ define(["state", "uihandler", "actor"], function(State, UIHandler, Actor) {
 				mouse.y-mouse.y%TILESIZE-camera.getY()%TILESIZE,
 				TILESIZE, TILESIZE, "#ccc");
 
-			//this.UIElements["main_panel"] = UIHandler.createRect(0, height-ui_height, width, ui_height, "#ccc", "#000");
-			this.UIElements["build_bar"] = UIHandler.createRect(0, height-ui_height, TILESIZE*8, ui_height, "#888", "#000");
 			var buttonHeight = TILESIZE, buttonWidth = 4*TILESIZE, buttonFontSize = 24;
 			var buttonNames = ["Structures", "1", "2", "3", "4", "5"], name;
-			var buttonCallbacks = {};
+			var buttonCallbacks = {
+				"Structures": this.structureButton,
+				"1": null,
+				"2": null,
+				"3": null,
+				"4": null,
+				"5": null
+			};
 			for(var i = 0; i < 6; i++) {
 				name = buttonNames[i];
 				var press_callback = function() {
-					if(ui_elements[this.text+"_button_active"]) {
+					if(ui_elements[this.text+"_button_active"]) {	// remove
 						delete ui_elements[this.text+"_button_active"];
-					} else {
-						ui_elements[this.text+"_button_active"] = UIHandler.createTextRect(this.getX(), this.getY(), buttonWidth, buttonHeight, this.text, buttonFontSize, null, "#000", "#fff", "#fff");
 
 						if(buttonCallbacks[this.text]) {
-							buttonCallbacks[this.text]();
+							buttonCallbacks[this.text](false, this);
+						}
+					} else {										// press
+						ui_elements[this.text+"_button_active"] = UIHandler.createTextRect(this.getX(), this.getY(), buttonWidth, buttonHeight, this.text, buttonFontSize, null, "#000", "#fff", "#fff");
+
+						for(var j in buttonCallbacks) {
+							if(j == this.text) {	// pressed if this button
+								if(buttonCallbacks[j]) {
+									buttonCallbacks[j](true, this);
+								}
+							} else {				// removed if other button
+								delete ui_elements[j+"_button_active"];
+
+								if(buttonCallbacks[j]) {
+									buttonCallbacks[j](false, ui_elements[j+"_button"]);
+								}
+							}
 						}
 					}
 				};
@@ -65,6 +84,13 @@ define(["state", "uihandler", "actor"], function(State, UIHandler, Actor) {
 				});
 			this.UIElements["entity_watcher"].setInvisible();
 
+		},
+		structureButton: function(pressed, button) {
+			if(pressed) {	// create
+
+			} else {		// destroy
+
+			}
 		},
 		mousedown: function(mouse) {
 			var camera = this.game.renderer.camera,
