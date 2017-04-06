@@ -32,11 +32,13 @@ define(["state", "uihandler", "actor"], function(State, UIHandler, Actor) {
 				var press_callback = function() {
 					if(ui_elements[this.text+"_button_active"]) {	// remove
 						delete ui_elements[this.text+"_button_active"];
+						this.setVisible();
 
 						if(buttonCallbacks[this.text]) {
 							buttonCallbacks[this.text](false, this);
 						}
 					} else {										// press
+						this.setInvisible();
 						ui_elements[this.text+"_button_active"] = UIHandler.createTextRect(this.getX(), this.getY(), buttonWidth, buttonHeight, this.text, buttonFontSize, null, "#000", "#fff", "#fff");
 
 						for(var j in buttonCallbacks) {
@@ -46,6 +48,7 @@ define(["state", "uihandler", "actor"], function(State, UIHandler, Actor) {
 								}
 							} else {				// removed if other button
 								delete ui_elements[j+"_button_active"];
+								ui_elements[j+"_button"].setVisible();
 
 								if(buttonCallbacks[j]) {
 									buttonCallbacks[j](false, ui_elements[j+"_button"]);
