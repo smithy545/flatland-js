@@ -1,4 +1,4 @@
-define(["ui/rectoutline", "ui/rect", "ui/text", "ui/textrect"], function(RectOutline, Rect, Text, TextRect) {
+define(["ui/rectoutline", "ui/rect", "ui/text", "ui/textrect", "ui/uientity"], function(RectOutline, Rect, Text, TextRect, UIEntity) {
 	var UIHandler = {
 		createRectOutline: function(x, y, width, height, color, trigger, untrigger, update) {
 			return new RectOutline(x, y, width, height, color, trigger, untrigger, update);
@@ -11,6 +11,9 @@ define(["ui/rectoutline", "ui/rect", "ui/text", "ui/textrect"], function(RectOut
 		},
 		createTextRect: function(x, y, width, height, text, fontSize, font, color, outlineColor, textColor, onTrigger, onUntrigger, update) {
 			return new TextRect(x, y, width, height, text, fontSize, font, color, outlineColor, textColor, onTrigger, onUntrigger, update);
+		},
+		createUIEntity: function(x, y, width, height, type, trigger, untrigger, update) {
+			return new UIEntity(x, y, width, height, type, trigger, untrigger, update);
 		},
 	};
 

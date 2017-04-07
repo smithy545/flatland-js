@@ -30,8 +30,8 @@ var World = Class.extend({
 
 			// find random unblocked spawn spot
 			do {
-				x = Math.floor(Math.random()*this.map.width);
-				y = Math.floor(Math.random()*this.map.height);
+				x = 501;//Math.floor(Math.random()*this.map.width);
+				y = 501;//Math.floor(Math.random()*this.map.height);
 			} while(this.map.blocked(x, y));
 
 			// give commander
@@ -65,6 +65,9 @@ var World = Class.extend({
 	addEntity: function(e) {
 		e.setId(this.entityId++);
 		e.setVisibleTo(e.owner, e.id);
+		if(e.owner !== -1) {
+			this.players[e.owner].socket.emit(Types.Messages.SPAWN, e.toSendable());
+		}
 		this.entities[e.id] = e;
 		if(e.owner > 0) {
 			this.players[e.owner].entities.push(e);
@@ -85,7 +88,7 @@ var World = Class.extend({
 		}
 	},
 	canOrder: function(ownerId, entityId) {
-		return this.entities[entityId].owner == ownerId
+		return this.entities[entityId].owner == ownerId;
 	},
 	canMove: function(id, x, y) {
 		var e = this.entities[id];
@@ -245,12 +248,20 @@ var World = Class.extend({
 	build: function(id, type, x, y) {
 		var entity = this.getEntity(id),
 			item = entity.getItem(),
-			prop, ents, X, Y;
+			prop, temp, ents, X, Y;
 
+		if(typeof EntityFactory[type] === 'undefined') {
+			return false;
+		}
+		prop = EntityFactory[type](entity.owner, x, y);
+		let w = prop.getWidth();
+		let h = prop.getHeight();
+		temp = prop;
+		prop = undefined;
 		// check if blocked by something else or already being built
-		if(map.blocked(x, y, prop.getWidth(), prop.getHeight())) {
-			for(var X = x; X < prop.getWidth(); X++) {
-				for(var Y = y; Y < prop.getHeight(); Y++) {
+		if(this.map.blocked(x, y, w, h)) {
+			for(var X = x; X < w; X++) {
+				for(var Y = y; Y < h; Y++) {
 					ents = map.entityAt(X, Y);
 					for(var i in ents) {
 						if(ents[i].type == type && !ents[i].built) {
@@ -263,17 +274,14 @@ var World = Class.extend({
 			if(typeof prop === 'undefined') {
 				return false;
 			}
-		} else if(EntityFactory[type]) { // if nothing there new building
-			prop = EntityFactory[type](entity.owner, type, x, y);
-		} else { // if blocked don't build
-			return false;
+		} else {
+			prop = temp;
+			this.addEntity(prop);
 		}
 
 		if(item && item.type in prop.remainingCost) {
 			prop.build(item, item.quantity);
 		}
-
-		this.players[entity.owner].socket.emit(Types.Messages.BUILD, prop.toSendable());
 
 		return true;
 	},

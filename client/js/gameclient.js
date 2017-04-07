@@ -24,6 +24,10 @@ define(["lib/socket.io", "entityfactory"], function(io, EntityFactory) {
 					game.map.unregisterEntity(game.entities[id]);
 					game.entities[id].setGridPosition(x, y);
 					game.map.registerEntity(game.entities[id]);
+
+					if(game.entities[id].move_callback) {
+						game.entities[id].move_callback();
+					}
 				});
 
 				conn.on(Types.Messages.UPDATETILE, function(type, x, y) {

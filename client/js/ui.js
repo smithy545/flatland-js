@@ -4,10 +4,17 @@ define(["entity"], function(Entity) {
 			this._super();
 
 			this.type = "UI";
+			this.children = [this];
 
 			this.trigger_callback = onTrigger;
 			this.untrigger_callback = onUntrigger;
 			this.update = update;
+		},
+		addChild: function(child) {
+			this.children.push(child);
+		},
+		killChildren: function() {
+			this.children = [this];
 		},
 		onUpdate: function(callback) {
 			this.update = callback;

@@ -33,6 +33,9 @@ define([], function() {
 				}
 			}
 		},
+		onMove: function(callback) {
+			this.move_callback = callback;
+		},
 		getItem: function() {
 			return this.item;
 		},

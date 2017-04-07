@@ -3,8 +3,8 @@ define(["actor"], function(Actor) {
 		init: function(id, owner, character, x, y) {
 			this._super(id, owner, x, y);
 
-			this.setWidth(1);
-			this.setHeight(1);
+			this.width = 1;
+			this.height = 1;
 
 			this.type = "person";
 			this.viewRadius = Types.getViewDistance(this.type);

@@ -68,6 +68,10 @@ var Types = {
 	}
 };
 
+True = function() {
+	return true;
+};
+
 Kinds = {
 	person: [Types.Entities.PERSON, "actor", 10],
     monster: [Types.Entities.MONSTER, "actor", 3],

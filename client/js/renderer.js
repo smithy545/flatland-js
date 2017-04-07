@@ -135,7 +135,7 @@ define(["camera", "artist", "sprites", "sprite"], function(Camera, Artist, sprit
 	            this.game.forEachProp((e) => {
 	            	var vr;
             		vr = e.viewRadius*TILESIZE;
-            		this.screenContext.clearRect(e.getX()-vr, e.getY()-vr, 2*vr+1, 2*vr+1);
+            		this.screenContext.clearRect(e.getX()-vr, e.getY()-vr, 2*vr+TILESIZE, 2*vr+TILESIZE);
 	            });
 
 	            // draw entities
@@ -162,18 +162,20 @@ define(["camera", "artist", "sprites", "sprite"], function(Camera, Artist, sprit
 		    }
 
 		    //draw ui
-		    this.game.forEachUIElement((e) => {
-            	if(e.isVisible()) {
-            		this.screenContext.clearRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
-            		if(e.useSprite) {
-            			Artist['sprite'](ctx, e);
-            		} else if(Artist[e.type]) {
-            			Artist[e.type](ctx, e);
-            		} else {
-	            		// no drawing function, just use square
-	            		ctx.strokeRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+		    this.game.forEachUIElement((element) => {
+		    	element.children.forEach((e) => {
+	            	if(e.isVisible()) {
+	            		this.screenContext.clearRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+	            		if(e.useSprite) {
+	            			Artist['sprite'](ctx, e);
+	            		} else if(Artist[e.type]) {
+	            			Artist[e.type](ctx, e);
+	            		} else {
+		            		// no drawing function, just use square
+		            		ctx.strokeRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+		            	}
 	            	}
-            	}
+	            });
 		    });
 		},
 	});

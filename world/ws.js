@@ -83,10 +83,14 @@ var ws = {
 			});
 
 			socket.on(Types.Messages.BUILD, function(id, type, x, y) {
-				if(!(socket.player && world.canOrder(socket.player.id, id)
-				&& Types.getKind(world.getEntity(id).type) == 'actor'
+				var builder = world.getEntity(id);
+				if(socket.player && typeof builder !== 'undefined' && world.canOrder(socket.player.id, id)
+				&& Types.getKindAsString(builder.type) == 'actor'
 				&& Types.getKindAsString(type) == 'prop'
-				&& world.build(id, type, x, y))) {
+				&& world.map.isNextTo(builder, x, y)
+				&& world.build(id, type, x, y)) {
+					//console.log(world.entities);
+				} else {
 					socket.emit(Types.Messages.ERROR, "Cannot build that.", Types.Messages.BUILD, id);
 				}
 			});

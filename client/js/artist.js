@@ -3,8 +3,16 @@ define([], function() {
 		tree: function(ctx, e) {
 			ctx.save();
 
-			ctx.strokeStyle = "#0f0";
+			ctx.strokeStyle = "#000";
 			ctx.strokeRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+
+			ctx.restore();
+		},
+		wall: function(ctx, e) {
+			ctx.save();
+
+			ctx.fillStyle = "#000";
+			ctx.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
 
 			ctx.restore();
 		},
