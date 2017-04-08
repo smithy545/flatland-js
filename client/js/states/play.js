@@ -91,17 +91,26 @@ define(["state", "uihandler", "actor", "entityfactory"], function(State, UIHandl
 				let j = 0;
 				for(var i in Kinds) {
 					if(Kinds[i][1] == 'prop') {
-						let x = 2*button.getWidth()+j*(2*TILESIZE+10);
+						let x = button.getWidth()+j*(2*TILESIZE+10);
 						let y = button.getY();
 						let prop = UIHandler.createUIEntity(x+TILESIZE*0.5, y+TILESIZE*0.5, TILESIZE, TILESIZE, i);
 						let propBox = UIHandler.createRect(x, y, 2*TILESIZE, 2*TILESIZE, "#888", "#000", True, () => {
+
 							if(this.selected) {
 								this.selected.setSelected(false);
 							}
 							this.selected = null;
 
 							for(var j in this.game.entities) {
-								this.game.client.emit(Types.Messages.BUILD, j, prop.type, 500, 500);
+								if(this.game.entities[j] instanceof Actor) {
+									this.game.entities[j].setTarget({
+										x: 500,
+										y: 501,
+										callback: () => {
+											this.game.client.emit(Types.Messages.BUILD, j, prop.type, 500, 500);
+										}
+									});
+								}
 							}
 
 							return true;
@@ -206,10 +215,10 @@ define(["state", "uihandler", "actor", "entityfactory"], function(State, UIHandl
 				x = mouse.x-(camera.getX()+mouse.x)%TILESIZE,
 				y = mouse.y-(camera.getY()+mouse.y)%TILESIZE;
 
-			if(rect && rect.getX() != x || rect.getY() != y) {
+			if(rect.getX() != x || rect.getY() != y) {
 				if(mouse.pressed) {
 					this.UIElements["selection_rect"] = UIHandler.createRectOutline(x, y, TILESIZE, TILESIZE, "#0ff");
-				} else if(this.game.map.blocked(Math.floor(x/TILESIZE), Math.floor(y/TILESIZE)) && this.selected) {
+				} else if(this.game.map.blocked(Math.floor((mouse.x+camera.getX())/TILESIZE), Math.floor((mouse.y+camera.getY())/TILESIZE)) && this.selected) {
 					this.UIElements["selection_rect"] = UIHandler.createRectOutline(x, y, TILESIZE, TILESIZE, "#f00");
 				} else {
 					this.UIElements["selection_rect"] = UIHandler.createRectOutline(x, y, TILESIZE, TILESIZE, "#ccc");

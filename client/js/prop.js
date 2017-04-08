@@ -5,6 +5,8 @@ define(["entity"], function(Entity) {
 			this.owner = owner;
 			this.setGridPosition(x, y);
 			this.id = id;
+
+			this.built = false;
 		}
 	});
 

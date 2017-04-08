@@ -10,6 +10,7 @@ define(["prop"], function(Prop) {
 			this.viewRadius = Types.getViewDistance(this.type);
 
 			this.passable = true;
+			this.built = true;
 		}
 	});
 

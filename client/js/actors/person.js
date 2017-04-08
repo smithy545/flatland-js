@@ -33,6 +33,9 @@ define(["actor"], function(Actor) {
 					}
 					return [Types.Messages.MOVE, this.id, move[0], move[1]];
 				} else {
+					if(this.target.callback) {
+						this.target.callback();
+					}
 					this.setState('idle_down');
 					this.target = this.queue.pop();
 				}

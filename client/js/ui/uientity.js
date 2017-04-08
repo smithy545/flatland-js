@@ -9,6 +9,7 @@ define(["ui"], function(UI) {
 			this.setHeight(height);
 
 			this.type = type; // fake typing for artist
+			this.built = true; // always built if prop
 		}
 	});
 

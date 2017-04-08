@@ -11,7 +11,7 @@ define(["actors/person", "actors/monster", "props/tree", "props/wall", "items/fr
 		return new Tree(e.id, e.x, e.y);
 	};
 	EntityFactory.wall = EntityFactory[Types.Entities.WALL] = function(e) {
-		return new Wall(e.id, e.owner, e.x, e.y);
+		return new Wall(e.id, e.owner, e.x, e.y, e.remainingCost, e.built);
 	};
 	EntityFactory.fruit = EntityFactory[Types.Entities.FRUIT] = function(e) {
 		return new Fruit(e.id, e.x, e.y);

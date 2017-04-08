@@ -1,6 +1,6 @@
 define(["prop"], function(Prop) {
 	var Wall = Prop.extend({
-		init: function(id, owner, x, y) {
+		init: function(id, owner, x, y, cost, built) {
 			this._super(id, owner, x, y);
 
 			this.width = 1;
@@ -8,6 +8,8 @@ define(["prop"], function(Prop) {
 			
 			this.type = "wall";
 			this.viewRadius = Types.getViewDistance(this.type);
+			this.cost = cost;
+			this.built = built;
 		}
 	});
 

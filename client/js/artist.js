@@ -11,8 +11,13 @@ define([], function() {
 		wall: function(ctx, e) {
 			ctx.save();
 
-			ctx.fillStyle = "#000";
-			ctx.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+			if(e.built) {
+				ctx.fillStyle = "#000";
+				ctx.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+			} else {
+				ctx.strokeStyle = "#000";
+				ctx.strokeRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+			}
 
 			ctx.restore();
 		},

@@ -29,6 +29,7 @@ var Prop = Entity.extend({
 		var obj = this._super();
 
 		obj['remainingCost'] = this.remainingCost;
+		obj['built'] = this.built;
 
 		return obj;
 	}
