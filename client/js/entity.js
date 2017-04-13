@@ -14,6 +14,7 @@ define([], function() {
 			this.passable = false;
 
 			// for sprite entities
+			this.drawType = null;
 			this.useSprite = false;
 			this.isLoaded = false;
 			this.animations = null;

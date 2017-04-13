@@ -141,10 +141,8 @@ define(["camera", "artist", "sprites", "sprite"], function(Camera, Artist, sprit
 	            // draw entities
 	            this.game.forEachEntity((e) => {
 	            	if(e.isVisible() && this.camera.canSee(e)) {
-	            		if(e.useSprite) {
-	            			Artist['sprite'](ctx, e);
-	            		} else if(Artist[e.type]) {
-	            			Artist[e.type](ctx, e);
+	            		if(Artist[e.drawType]) {
+	            			Artist[e.drawType](ctx, e);
 	            		} else {
 		            		// no drawing function, just use square
 		            		ctx.fillStyle = "#000";

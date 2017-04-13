@@ -11,6 +11,8 @@ define(["prop"], function(Prop) {
 
 			this.passable = true;
 			this.built = true;
+
+			this.drawType = "tree";
 		}
 	});
 

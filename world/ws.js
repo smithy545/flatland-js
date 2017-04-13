@@ -84,13 +84,11 @@ var ws = {
 
 			socket.on(Types.Messages.BUILD, function(id, type, x, y) {
 				var builder = world.getEntity(id);
-				if(socket.player && typeof builder !== 'undefined' && world.canOrder(socket.player.id, id)
+				if(!(socket.player && typeof builder !== 'undefined' && world.canOrder(socket.player.id, id)
 				&& Types.getKindAsString(builder.type) == 'actor'
 				&& Types.getKindAsString(type) == 'prop'
 				&& world.map.isNextTo(builder, x, y)
-				&& world.build(id, type, x, y)) {
-					//console.log(world.entities);
-				} else {
+				&& world.build(id, type, x, y))) {
 					socket.emit(Types.Messages.ERROR, "Cannot build that.", Types.Messages.BUILD, id);
 				}
 			});

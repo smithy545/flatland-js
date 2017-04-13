@@ -9,6 +9,7 @@ define(["actor"], function(Actor) {
 			this.type = "person";
 			this.viewRadius = Types.getViewDistance(this.type);
 
+			this.drawType = "sprite";
 			this.useSprite = true;
 			this.spriteName = "person";
 

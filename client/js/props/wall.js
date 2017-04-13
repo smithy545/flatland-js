@@ -8,8 +8,11 @@ define(["prop"], function(Prop) {
 			
 			this.type = "wall";
 			this.viewRadius = Types.getViewDistance(this.type);
+			
 			this.cost = cost;
 			this.built = built;
+
+			this.drawType = "rect";
 		}
 	});
 

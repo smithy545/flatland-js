@@ -8,6 +8,8 @@ define(["item"], function(Item) {
 			
 			this.type = "fruit";
 			this.viewRadius = Types.getViewDistance(this.type);
+		
+			this.drawType = "circle";
 		}
 	});
 
