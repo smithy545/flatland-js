@@ -10,8 +10,8 @@ define(["renderer", "states", "gameclient", "map", "storage", "actor", "prop", "
             this.storage = new Storage(this);   // cookie storage system
             this.id = this.storage.id;  // server generated id
             this.client = new GameClient(this); // connection to server
-            this.map = null         // map object
-            this.pathfinder = null  // pathfinder object
+            this.map = null;         // map object
+            this.pathfinder = null;  // pathfinder object
 
             // entity holders
             this.entities = {};
